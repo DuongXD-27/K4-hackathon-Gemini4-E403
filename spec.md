@@ -148,7 +148,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 **Kết quả các lượt chạy:**
 | Lượt | Ngày | % pass | Ghi chú |
 |---|---|---|---|
-| Lượt 1 | [CẦN ĐIỀN] | [CẦN ĐIỀN] | [CẦN ĐIỀN] |
+| Lượt 1 | 31/07/2026 | — | Chờ Phong chạy golden set sau CP2 |
 
 ---
 
@@ -157,21 +157,21 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 **Phân công có tên:**
 | Phần | Người phụ trách |
 |---|---|
-| spec.md + evidence | [CẦN ĐIỀN] |
-| Mining data + khảo sát đường A | [CẦN ĐIỀN] |
-| Prompt engineering + golden set | [CẦN ĐIỀN] |
-| Build prototype (UI + API call) | [CẦN ĐIỀN] |
-| Validation + demo script | [CẦN ĐIỀN] |
+| spec.md + evidence | Dương |
+| Mining data + khảo sát đường A | Dương |
+| Prompt engineering + golden set | Công |
+| Build prototype (UI + API call) | Tuấn |
+| Validation + demo script | Phong |
 
-**Willing users (>=3 tên cụ thể — xác nhận trước CP1):**
-- [CẦN ĐIỀN — Tên 1, vai trò trong khoá]
-- [CẦN ĐIỀN — Tên 2]
-- [CẦN ĐIỀN — Tên 3]
+**Willing users (≥3 tên cụ thể — xác nhận trước CP1):**
+- Nguyễn Tuấn Dương — học viên khoá AI Thực Chiến (nhóm Gemini4)
+- Tạ Quốc Tuấn — học viên khoá AI Thực Chiến (nhóm Gemini4)
+- Lý Nhật Huy — học viên khoá AI Thực Chiến (nhóm Gemini4)
 
 **Kế hoạch validation CP5:**
 - Task giao: "Dùng cái này để hiểu đoạn slide sau" (giao đoạn slide thật từ data pack)
 - 3 câu hỏi sau khi dùng: (1) Điều gì khó hiểu nhất? (2) Kết quả AI bạn có tin không — vì sao? (3) Bạn có dùng thật không — vì sao/vì sao chưa?
-- Ai log: [CẦN ĐIỀN]
+- Ai log: Phong
 
 **Multi-prototype (nếu kịp — giữa CP2 và CP3):**
 - Trục thử: **Mức proactiveness** — PA: Chỉ flag khi misconception rõ ràng (conservative) vs PB: Luôn sinh check-question sau mỗi turn (aggressive)
@@ -184,3 +184,6 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 | Thời điểm | Đổi gì | Vì sao (trỏ về feedback/case nào) |
 |---|---|---|
 | 30/07/2026 | Khởi tạo spec | Canvas CP1 — đề tài Comprehension Gap Detector |
+| 30/07/2026 | Điền evidence khảo sát n=23, 100%, 96% | Kết quả Google Form thu được trước 23:59 N1 |
+| 30/07/2026 | Chèn ảnh survey.png vào §1 | Bằng chứng trực quan đường A |
+| 30/07/2026 | Điền phân công có tên + willing users + ai log CP5 | Hoàn thiện §8 trước deadline nộp bài |
