@@ -150,12 +150,6 @@
       cursor: not-allowed;
     }
 
-    .provider-selector .no-key-warning {
-      color: #fbbf24;
-      font-size: 0.78rem;
-      font-weight: 600;
-    }
-
     .lesson-selector {
       min-width: min(100%, 300px);
       border: 1px solid rgba(129, 140, 248, 0.28);
@@ -752,7 +746,7 @@
 
       <article class="panel chat-panel">
         <header class="panel-header">
-          <h2>🤖 AI Tutor</h2>
+          <h2>AI Tutor</h2>
           <span class="mini-meta">Gap-aware chat</span>
         </header>
 
@@ -764,7 +758,7 @@
           <div class="message tutor">
             <div class="bubble tutor-response">
               <div class="section answer">
-                <h3>📖 Trả lời:</h3>
+                <h3>Trả lời:</h3>
                 <p>Không, hai kỹ thuật này khác nhau hoàn toàn. Few-shot prompting cung cấp ví dụ <em>trong prompt</em> lúc inference — model không học gì thêm, trọng số không thay đổi [trang 14]. Fine-tuning thì cập nhật trọng số model bằng cách huấn luyện lại trên tập dữ liệu mới — đây là quá trình tốn kém và xảy ra trước khi deploy.</p>
               </div>
 
@@ -772,14 +766,14 @@
 
               <div class="misconception-wrap">
                 <div class="section misconception">
-                  <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
+                  <h3>Mình nhận ra bạn có thể đang nhầm:</h3>
                   <p>Few-shot và fine-tuning đều <em>dùng ví dụ</em>, nhưng ví dụ trong few-shot chỉ là ngữ cảnh tạm thời trong prompt, không "dạy" gì cho model. Fine-tuning mới thực sự thay đổi model.</p>
                 </div>
                 <div class="section-divider"></div>
               </div>
 
               <div class="section check">
-                <h3>✅ Câu kiểm tra nhanh:</h3>
+                <h3>Câu kiểm tra nhanh:</h3>
                 <p>"Nếu bạn muốn model luôn trả lời theo phong cách nhất định <em>mà không cần nhắc lại mỗi lần</em>, bạn nên dùng kỹ thuật nào: Few-shot hay Fine-tuning? Vì sao?"</p>
               </div>
 
@@ -801,47 +795,7 @@
     </section>
   </main>
 
-  <template id="mockTutorResponse">
-    <div class="message tutor">
-      <div class="bubble tutor-response">
-        <div class="section answer">
-          <h3>📖 Trả lời:</h3>
-          <p>Trong ví dụ ở slide, model nhận ba cặp Input → Output để suy ra nhiệm vụ là phân loại cảm xúc. Với câu "Giao hàng chậm", few-shot prompting giúp model bắt chước định dạng và nhiều khả năng trả lời là Negative, vì nội dung thể hiện trải nghiệm không tốt [trang 14].</p>
-        </div>
-
-        <div class="section-divider"></div>
-
-        <div class="misconception-wrap">
-          <div class="section misconception">
-            <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
-            <p>Few-shot không phải là đưa càng nhiều ví dụ càng tốt. Điểm chính là chọn vài ví dụ đủ đại diện, đúng format, và sát nhiệm vụ để model nhận ra quy luật cần áp dụng.</p>
-          </div>
-          <div class="section-divider"></div>
-        </div>
-
-        <div class="section check">
-          <h3>✅ Câu kiểm tra nhanh:</h3>
-          <p>"Nếu prompt chỉ mô tả: Hãy phân loại cảm xúc câu sau thành Positive hoặc Negative, nhưng không đưa ví dụ nào, đó là zero-shot, one-shot hay few-shot? Vì sao?"</p>
-        </div>
-
-        <div class="feedback-row">
-          <button class="feedback" type="button">👍 Hữu ích</button>
-          <button class="feedback" type="button">👎 Quá khó</button>
-          <button class="feedback" type="button">👎 Không liên quan</button>
-          <button class="skip" type="button">Bỏ qua →</button>
-        </div>
-      </div>
-    </div>
-  </template>
-
   <script>
-    /* ═══════════════════════════════════════════════
-       Runtime .env loader — key KHÔNG nằm trong code
-       Yêu cầu: chạy qua HTTP server, không mở file:// trực tiếp
-       Start server: python3 -m http.server 8000
-       Mở: http://localhost:8000/codebase/index.html
-       ═══════════════════════════════════════════════ */
-
     (async function main() {
       /* ───────── 1. Fetch & parse .env ───────── */
       let ENV = {};
@@ -858,7 +812,7 @@
           const val = line.slice(idx + 1).trim();
           ENV[key] = val;
         });
-        console.log("✅ .env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
+        console.log(".env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
       } catch (err) {
         console.warn("Không đọc được .env, app vẫn chạy ở chế độ không API key:", err.message);
       }
@@ -909,8 +863,7 @@ Quy tắc:
       }
 
       function getPdfUrl(lesson) {
-        const staticUrl = `../data/vlearn-pack/slides/${lesson.pdf}#page=${lesson.page}&toolbar=0&navpanes=0&view=FitH`;
-        return staticUrl;
+        return `../data/vlearn-pack/slides/${lesson.pdf}#page=${lesson.page}&toolbar=0&navpanes=0&view=FitH`;
       }
 
       function getPromptContext(lesson, text) {
@@ -1035,6 +988,7 @@ ${ocr}`;
       prevSlide.addEventListener("click", () => renderSlide(currentSlideIndex - 1));
       nextSlide.addEventListener("click", () => renderSlide(currentSlideIndex + 1));
       highlightSlide.addEventListener("click", () => questionInput.focus());
+
       function captureSelection() {
         const selected = window.getSelection().toString().trim();
         if (selected.length > 10) {
@@ -1320,4 +1274,3 @@ ${ocr}`;
   </script>
 </body>
 </html>
-
