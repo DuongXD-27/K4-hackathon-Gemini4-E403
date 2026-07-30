@@ -2,3 +2,13 @@
 node_modules/
 *.env
 codebase/config.js
+.venv/
+data/ocr-cache/
+__pycache__/
+*.pyc
+
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyo
+*.pyd
