@@ -542,7 +542,7 @@
     <section class="workspace" aria-label="Comprehension Gap Detector workspace">
       <article class="panel slide-panel">
         <header class="panel-header">
-          <h2>📄 Nội dung bài giảng</h2>
+          <h2>Nội dung bài giảng</h2>
           <span class="mini-meta">Slide Viewer</span>
         </header>
         <div class="slide-body">
@@ -562,7 +562,7 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
           </div>
 
           <div class="selection-card">
-            <label>✏️ Đoạn bạn đang bôi đen:</label>
+            <label>Đoạn bạn đang bôi đen:</label>
             <span class="highlight">Few-shot Prompting là kỹ thuật cung cấp một vài ví dụ mẫu...</span>
           </div>
         </div>
@@ -570,7 +570,7 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
 
       <article class="panel chat-panel">
         <header class="panel-header">
-          <h2>🤖 AI Tutor</h2>
+          <h2>AI Tutor</h2>
           <span class="mini-meta">Gap-aware chat</span>
         </header>
 
@@ -582,7 +582,7 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
           <div class="message tutor">
             <div class="bubble tutor-response">
               <div class="section answer">
-                <h3>📖 Trả lời:</h3>
+                <h3>Trả lời:</h3>
                 <p>Không, hai kỹ thuật này khác nhau hoàn toàn. Few-shot prompting cung cấp ví dụ <em>trong prompt</em> lúc inference — model không học gì thêm, trọng số không thay đổi [trang 14]. Fine-tuning thì cập nhật trọng số model bằng cách huấn luyện lại trên tập dữ liệu mới — đây là quá trình tốn kém và xảy ra trước khi deploy.</p>
               </div>
 
@@ -590,14 +590,14 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
 
               <div class="misconception-wrap">
                 <div class="section misconception">
-                  <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
+                  <h3>Mình nhận ra bạn có thể đang nhầm:</h3>
                   <p>Few-shot và fine-tuning đều <em>dùng ví dụ</em>, nhưng ví dụ trong few-shot chỉ là ngữ cảnh tạm thời trong prompt, không "dạy" gì cho model. Fine-tuning mới thực sự thay đổi model.</p>
                 </div>
                 <div class="section-divider"></div>
               </div>
 
               <div class="section check">
-                <h3>✅ Câu kiểm tra nhanh:</h3>
+                <h3>Câu kiểm tra nhanh:</h3>
                 <p>"Nếu bạn muốn model luôn trả lời theo phong cách nhất định <em>mà không cần nhắc lại mỗi lần</em>, bạn nên dùng kỹ thuật nào: Few-shot hay Fine-tuning? Vì sao?"</p>
               </div>
 
@@ -623,7 +623,7 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
     <div class="message tutor">
       <div class="bubble tutor-response">
         <div class="section answer">
-          <h3>📖 Trả lời:</h3>
+          <h3>Trả lời:</h3>
           <p>Trong ví dụ ở slide, model nhận ba cặp Input → Output để suy ra nhiệm vụ là phân loại cảm xúc. Với câu "Giao hàng chậm", few-shot prompting giúp model bắt chước định dạng và nhiều khả năng trả lời là Negative, vì nội dung thể hiện trải nghiệm không tốt [trang 14].</p>
         </div>
 
@@ -631,14 +631,14 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
 
         <div class="misconception-wrap">
           <div class="section misconception">
-            <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
+            <h3>Mình nhận ra bạn có thể đang nhầm:</h3>
             <p>Few-shot không phải là đưa càng nhiều ví dụ càng tốt. Điểm chính là chọn vài ví dụ đủ đại diện, đúng format, và sát nhiệm vụ để model nhận ra quy luật cần áp dụng.</p>
           </div>
           <div class="section-divider"></div>
         </div>
 
         <div class="section check">
-          <h3>✅ Câu kiểm tra nhanh:</h3>
+          <h3>Câu kiểm tra nhanh:</h3>
           <p>"Nếu prompt chỉ mô tả: Hãy phân loại cảm xúc câu sau thành Positive hoặc Negative, nhưng không đưa ví dụ nào, đó là zero-shot, one-shot hay few-shot? Vì sao?"</p>
         </div>
 
@@ -676,12 +676,12 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
           const val = line.slice(idx + 1).trim();
           ENV[key] = val;
         });
-        console.log("✅ .env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
+        console.log(".env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
       } catch (err) {
-        console.error("❌ Không đọc được .env:", err.message);
+        console.error("Không đọc được .env:", err.message);
         document.body.innerHTML = `
           <div style="max-width:600px;margin:80px auto;padding:32px;background:#1e293b;border-radius:12px;color:#fca5a5;font-family:Inter,sans-serif;text-align:center">
-            <h2 style="color:#f87171">⚠️ Không đọc được file .env</h2>
+            <h2 style="color:#f87171">Không đọc được file .env</h2>
             <p style="color:#cbd5e1;line-height:1.7">Bạn cần chạy qua HTTP server, không mở file trực tiếp.</p>
             <pre style="background:#0f172a;padding:16px;border-radius:8px;color:#a5f3fc;text-align:left;font-size:0.9rem">cd ${location.pathname.includes('/codebase/') ? '.. (thư mục gốc project)' : '.'}\npython3 -m http.server 8000\n\n# Mở trình duyệt:\nhttp://localhost:8000/codebase/index.html</pre>
           </div>`;
