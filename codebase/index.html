@@ -105,6 +105,56 @@
       box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.14);
     }
 
+    .provider-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 4px 0 14px;
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.1);
+      white-space: nowrap;
+      transition: border-color 180ms ease;
+    }
+
+    .provider-selector:hover {
+      border-color: rgba(129, 140, 248, 0.5);
+    }
+
+    .provider-selector select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 0;
+      background: transparent;
+      color: #dbeafe;
+      font-weight: 600;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0 24px 0 4px;
+      outline: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+    }
+
+    .provider-selector select option {
+      background: #1e293b;
+      color: #e2e8f0;
+    }
+
+    .provider-selector select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .provider-selector .no-key-warning {
+      color: #fbbf24;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
     .workspace {
       display: grid;
       grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
@@ -478,7 +528,15 @@
         <h1>Comprehension Gap Detector</h1>
         <p>AI tutor interface for online learning</p>
       </div>
-      <div class="status-pill"><span class="status-dot"></span> Prototype mock</div>
+      <div class="provider-selector">
+        <span class="status-dot"></span>
+        <select id="providerSelect">
+          <option value="gemini">🔵 Gemini</option>
+          <option value="openai">🟢 OpenAI</option>
+          <option value="anthropic">🟠 Anthropic</option>
+          <option value="openrouter">🟣 OpenRouter</option>
+        </select>
+      </div>
     </header>
 
     <section class="workspace" aria-label="Comprehension Gap Detector workspace">
@@ -595,80 +653,336 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
   </template>
 
   <script>
-    const chatStream = document.querySelector("#chatStream");
-    const composer = document.querySelector("#composer");
-    const questionInput = document.querySelector("#questionInput");
-    const sendButton = document.querySelector("#sendButton");
-    const mockTutorResponse = document.querySelector("#mockTutorResponse");
+    /* ═══════════════════════════════════════════════
+       Runtime .env loader — key KHÔNG nằm trong code
+       Yêu cầu: chạy qua HTTP server, không mở file:// trực tiếp
+       Start server: python3 -m http.server 8000
+       Mở: http://localhost:8000/codebase/index.html
+       ═══════════════════════════════════════════════ */
 
-    function scrollToLatest() {
-      chatStream.scrollTop = chatStream.scrollHeight;
-    }
-
-    function wireTutorActions(root = document) {
-      root.querySelectorAll(".feedback").forEach((button) => {
-        button.addEventListener("click", () => {
-          const row = button.closest(".feedback-row");
-          row.querySelectorAll(".feedback").forEach((item) => item.classList.remove("selected"));
-          button.classList.add("selected");
+    (async function main() {
+      /* ───────── 1. Fetch & parse .env ───────── */
+      let ENV = {};
+      try {
+        const res = await fetch("../.env");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+        text.split("\n").forEach(line => {
+          line = line.trim();
+          if (!line || line.startsWith("#")) return;
+          const idx = line.indexOf("=");
+          if (idx === -1) return;
+          const key = line.slice(0, idx).trim();
+          const val = line.slice(idx + 1).trim();
+          ENV[key] = val;
         });
-      });
+        console.log("✅ .env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
+      } catch (err) {
+        console.error("❌ Không đọc được .env:", err.message);
+        document.body.innerHTML = `
+          <div style="max-width:600px;margin:80px auto;padding:32px;background:#1e293b;border-radius:12px;color:#fca5a5;font-family:Inter,sans-serif;text-align:center">
+            <h2 style="color:#f87171">⚠️ Không đọc được file .env</h2>
+            <p style="color:#cbd5e1;line-height:1.7">Bạn cần chạy qua HTTP server, không mở file trực tiếp.</p>
+            <pre style="background:#0f172a;padding:16px;border-radius:8px;color:#a5f3fc;text-align:left;font-size:0.9rem">cd ${location.pathname.includes('/codebase/') ? '.. (thư mục gốc project)' : '.'}\npython3 -m http.server 8000\n\n# Mở trình duyệt:\nhttp://localhost:8000/codebase/index.html</pre>
+          </div>`;
+        return;
+      }
 
-      root.querySelectorAll(".skip").forEach((button) => {
-        button.addEventListener("click", () => {
-          const bubble = button.closest(".tutor-response");
-          const target = bubble.querySelector(".misconception-wrap");
-          if (target) {
-            target.classList.add("hidden");
-            button.textContent = "Đã bỏ qua";
-            button.disabled = true;
+      /* ───────── 2. DOM refs ───────── */
+      const chatStream = document.querySelector("#chatStream");
+      const composer = document.querySelector("#composer");
+      const questionInput = document.querySelector("#questionInput");
+      const sendButton = document.querySelector("#sendButton");
+      const providerSelect = document.querySelector("#providerSelect");
+
+      /* ───────── 3. Slide context & System prompt ───────── */
+      const SLIDE_CONTEXT = `[Trang 14 — Day 1: LLM Foundation]
+Few-shot Prompting là kỹ thuật cung cấp một vài ví dụ mẫu (examples) trong prompt để giúp model hiểu định dạng đầu ra mong muốn, thay vì chỉ mô tả yêu cầu bằng ngôn ngữ tự nhiên.
+Zero-shot Prompting: Không có ví dụ, model tự suy luận từ mô tả nhiệm vụ.
+One-shot Prompting: Cung cấp đúng 1 ví dụ.
+Few-shot Prompting: Cung cấp 2–5 ví dụ.`;
+
+      const SYSTEM_PROMPT = `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide và vừa bôi đen một đoạn rồi hỏi bạn.
+Tài liệu slide học viên đang xem:
+${SLIDE_CONTEXT}
+Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc JSON sau, không thêm gì khác ngoài JSON:
+{
+  "answer": "Câu trả lời giải thích khái niệm, kèm [trang 14] nếu có căn cứ trong tài liệu. Nếu không có căn cứ, ghi rõ 'thông tin này ngoài tài liệu hiện tại'.",
+  "has_misconception": true hoặc false,
+  "misconception": "Chỉ điền nếu has_misconception=true: mô tả ngắn gọn học viên đang nhầm điểm gì và đúng phải là gì, kèm citation nếu có. Nếu false, để chuỗi rỗng.",
+  "check_question": "1 câu hỏi ngắn kiểm tra xem học viên đã hiểu đúng chưa. Phải liên quan trực tiếp đến câu hỏi vừa được hỏi."
+}
+Quy tắc:
+- has_misconception = true CHỈ KHI câu hỏi ẩn chứa nhầm lẫn rõ ràng. Đừng flag false positive.
+- Nếu câu hỏi quá ngắn/mơ hồ (dưới 10 chữ): answer = "Bạn đang thắc mắc về phần nào cụ thể? Hãy mô tả thêm để mình hỗ trợ chính xác hơn.", has_misconception = false, check_question = "".
+- Luôn dùng tiếng Việt, giọng thân thiện như mentor, không học thuật cứng nhắc.`;
+
+      /* ───────── 4. Multi-provider adapters ───────── */
+      const PROVIDERS = {
+        gemini: {
+          name: "Gemini",
+          getKey: () => ENV.GEMINI_API_KEY,
+          buildRequest(userText) {
+            const model = ENV.GEMINI_MODEL || "gemini-2.0-flash";
+            return {
+              url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.getKey()}`,
+              options: {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\nCâu hỏi học viên: " + userText }] }]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
+            return data.candidates[0].content.parts[0].text;
+          }
+        },
+
+        openai: {
+          name: "OpenAI",
+          getKey: () => ENV.OPENAI_API_KEY,
+          buildRequest(userText) {
+            return {
+              url: "https://api.openai.com/v1/chat/completions",
+              options: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${this.getKey()}`
+                },
+                body: JSON.stringify({
+                  model: ENV.OPENAI_MODEL || "gpt-4o-mini",
+                  messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    { role: "user", content: userText }
+                  ]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ OpenAI API");
+            return data.choices[0].message.content;
+          }
+        },
+
+        anthropic: {
+          name: "Anthropic",
+          getKey: () => ENV.ANTHROPIC_API_KEY,
+          buildRequest(userText) {
+            return {
+              url: "https://api.anthropic.com/v1/messages",
+              options: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-api-key": this.getKey(),
+                  "anthropic-version": "2023-06-01",
+                  "anthropic-dangerous-direct-browser-access": "true"
+                },
+                body: JSON.stringify({
+                  model: ENV.ANTHROPIC_MODEL || "claude-sonnet-4-20250514",
+                  max_tokens: 1024,
+                  system: SYSTEM_PROMPT,
+                  messages: [
+                    { role: "user", content: userText }
+                  ]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ Anthropic API");
+            if (data.type === "error") throw new Error(data.error?.message || "Lỗi từ Anthropic API");
+            return data.content[0].text;
+          }
+        },
+
+        openrouter: {
+          name: "OpenRouter",
+          getKey: () => ENV.OPENROUTER_API_KEY,
+          buildRequest(userText) {
+            return {
+              url: "https://openrouter.ai/api/v1/chat/completions",
+              options: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${this.getKey()}`
+                },
+                body: JSON.stringify({
+                  model: ENV.OPENROUTER_MODEL || "google/gemma-4-31b-it:free",
+                  messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    { role: "user", content: userText }
+                  ]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ OpenRouter API");
+            return data.choices[0].message.content;
+          }
+        }
+      };
+
+      /* ───────── 5. Provider selector init ───────── */
+      function getActiveProvider() {
+        return providerSelect.value;
+      }
+
+      function initProviderSelector() {
+        if (ENV.ACTIVE_PROVIDER && PROVIDERS[ENV.ACTIVE_PROVIDER]) {
+          providerSelect.value = ENV.ACTIVE_PROVIDER;
+        }
+        Array.from(providerSelect.options).forEach(opt => {
+          const p = PROVIDERS[opt.value];
+          if (p && !p.getKey()) {
+            opt.textContent += " (chưa có key)";
+            opt.style.color = "#94a3b8";
           }
         });
-      });
-    }
+      }
 
-    function addStudentMessage(text) {
-      const wrapper = document.createElement("div");
-      wrapper.className = "message student";
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      bubble.textContent = text;
-      wrapper.appendChild(bubble);
-      chatStream.appendChild(wrapper);
-    }
+      /* ───────── 6. Utility functions ───────── */
+      function scrollToLatest() {
+        chatStream.scrollTop = chatStream.scrollHeight;
+      }
 
-    function addLoadingMessage() {
-      const wrapper = document.createElement("div");
-      wrapper.className = "message tutor loading";
-      wrapper.innerHTML = '<div class="bubble"><span class="spinner" aria-hidden="true"></span>🤔 Đang phân tích...</div>';
-      chatStream.appendChild(wrapper);
-      return wrapper;
-    }
+      function wireTutorActions(root = document) {
+        root.querySelectorAll(".feedback").forEach((button) => {
+          button.addEventListener("click", () => {
+            const row = button.closest(".feedback-row");
+            row.querySelectorAll(".feedback").forEach((item) => item.classList.remove("selected"));
+            button.classList.add("selected");
+          });
+        });
 
-    composer.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const text = questionInput.value.trim() || "Mình chưa rõ ví dụ này hoạt động như thế nào.";
+        root.querySelectorAll(".skip").forEach((button) => {
+          button.addEventListener("click", () => {
+            const bubble = button.closest(".tutor-response");
+            const target = bubble.querySelector(".misconception-wrap");
+            if (target) {
+              target.classList.add("hidden");
+              button.textContent = "Đã bỏ qua";
+              button.disabled = true;
+            }
+          });
+        });
+      }
 
-      addStudentMessage(text);
-      questionInput.value = "";
-      questionInput.disabled = true;
-      sendButton.disabled = true;
-      const loading = addLoadingMessage();
-      scrollToLatest();
+      function addStudentMessage(text) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message student";
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+        wrapper.appendChild(bubble);
+        chatStream.appendChild(wrapper);
+      }
 
-      window.setTimeout(() => {
-        loading.remove();
-        const response = mockTutorResponse.content.cloneNode(true);
-        chatStream.appendChild(response);
-        wireTutorActions(chatStream.lastElementChild);
+      function addLoadingMessage(providerName) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message tutor loading";
+        wrapper.innerHTML = `<div class="bubble"><span class="spinner" aria-hidden="true"></span>🤔 Đang hỏi ${providerName}...</div>`;
+        chatStream.appendChild(wrapper);
+        return wrapper;
+      }
+
+      function renderTutorResponse(json) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message tutor";
+        msgDiv.innerHTML = `
+          <div class="bubble tutor-response">
+            <div class="section answer">
+              <h3>📖 Trả lời:</h3>
+              <p>${json.answer}</p>
+            </div>
+            <div class="section-divider"></div>
+            <div class="misconception-wrap${json.has_misconception ? "" : " hidden"}">
+              <div class="section misconception">
+                <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
+                <p>${json.misconception || ""}</p>
+              </div>
+              <div class="section-divider"></div>
+            </div>
+            <div class="section check">
+              <h3>✅ Câu kiểm tra nhanh:</h3>
+              <p>${json.check_question || "(Không cần kiểm tra thêm cho câu hỏi này.)"}</p>
+            </div>
+            <div class="feedback-row">
+              <button class="feedback" type="button">👍 Hữu ích</button>
+              <button class="feedback" type="button">👎 Quá khó</button>
+              <button class="feedback" type="button">👎 Không liên quan</button>
+              <button class="skip" type="button">Bỏ qua →</button>
+            </div>
+          </div>`;
+        chatStream.appendChild(msgDiv);
+        wireTutorActions(msgDiv);
+      }
+
+      function renderError(message) {
+        const errDiv = document.createElement("div");
+        errDiv.className = "message tutor";
+        errDiv.innerHTML = `<div class="bubble" style="border-color:rgba(239,68,68,0.4);color:#fca5a5">⚠️ ${message}</div>`;
+        chatStream.appendChild(errDiv);
+      }
+
+      /* ───────── 7. Submit handler ───────── */
+      composer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const text = questionInput.value.trim();
+        if (!text) return;
+
+        const providerId = getActiveProvider();
+        const provider = PROVIDERS[providerId];
+
+        if (!provider) {
+          renderError("Provider không hợp lệ.");
+          return;
+        }
+        if (!provider.getKey()) {
+          renderError(`Chưa có API key cho ${provider.name}. Hãy thêm key vào file .env rồi reload trang.`);
+          return;
+        }
+
+        addStudentMessage(text);
+        questionInput.value = "";
+        questionInput.disabled = true;
+        sendButton.disabled = true;
+        providerSelect.disabled = true;
+        const loading = addLoadingMessage(provider.name);
+        scrollToLatest();
+
+        try {
+          const { url, options } = provider.buildRequest(text);
+          const res = await fetch(url, options);
+          const data = await res.json();
+          const raw = provider.parseResponse(data);
+          const json = JSON.parse(raw.replace(/```json|```/g, "").trim());
+          loading.remove();
+          renderTutorResponse(json);
+        } catch (err) {
+          loading.remove();
+          renderError(`Lỗi kết nối ${provider.name}: ${err.message}. Kiểm tra API key.`);
+        }
+
         questionInput.disabled = false;
         sendButton.disabled = false;
+        providerSelect.disabled = false;
         questionInput.focus();
         scrollToLatest();
-      }, 1500);
-    });
+      });
 
-    wireTutorActions();
+      /* ───────── 8. Init ───────── */
+      initProviderSelector();
+      wireTutorActions();
+    })();
   </script>
 </body>
 </html>
+
