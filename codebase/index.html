@@ -45,7 +45,8 @@
     }
 
     button,
-    textarea {
+    textarea,
+    select {
       font: inherit;
     }
 
@@ -155,6 +156,43 @@
       font-weight: 600;
     }
 
+    .lesson-selector {
+      min-width: min(100%, 300px);
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 8px;
+      color: #dbeafe;
+      background: rgba(15, 23, 42, 0.74);
+      font-size: 0.84rem;
+      font-weight: 600;
+      outline: none;
+      padding: 10px 36px 10px 12px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .lesson-selector:hover,
+    .lesson-selector:focus {
+      border-color: rgba(129, 140, 248, 0.62);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    }
+
+    .lesson-selector option {
+      background: #1e293b;
+      color: #e2e8f0;
+    }
+
+    .slide-selectors {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.55fr) minmax(160px, 1fr);
+      gap: 8px;
+      width: min(100%, 500px);
+    }
+
     .workspace {
       display: grid;
       grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
@@ -204,58 +242,176 @@
       display: flex;
       flex: 1;
       flex-direction: column;
-      gap: 18px;
+      gap: 14px;
       padding: 22px;
       min-height: 0;
     }
 
-    .document {
-      flex: 1;
-      min-height: 430px;
-      max-height: 540px;
-      overflow: auto;
-      border: 1px solid rgba(226, 232, 240, 0.14);
-      border-radius: 8px;
-      background: var(--doc);
-      color: var(--doc-text);
-      padding: 28px;
-      line-height: 1.72;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    .slide-viewer {
+      flex: 0 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #0b1220;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      aspect-ratio: 16 / 9;
+      max-height: 360px;
+      min-height: 260px;
+      user-select: text;
+      cursor: text;
     }
 
-    .document pre {
-      margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-      font-size: 0.98rem;
+    .slide-topbar,
+    .slide-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 0 0 auto;
+      color: #cbd5e1;
+      background: rgba(99, 102, 241, 0.16);
+      border-color: rgba(129, 140, 248, 0.18);
     }
 
-    .selection-card {
-      border: 1px solid rgba(250, 204, 21, 0.34);
-      border-radius: 8px;
-      background: rgba(250, 204, 21, 0.09);
-      padding: 16px;
-    }
-
-    .selection-card label {
-      display: block;
-      margin-bottom: 10px;
-      color: #fde68a;
+    .slide-topbar {
+      min-height: 40px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.18);
+      font-size: 0.78rem;
       font-weight: 700;
-      font-size: 0.92rem;
     }
 
-    .highlight {
-      display: inline;
-      padding: 3px 6px;
-      border-radius: 5px;
-      background: #fef08a;
-      color: #1e293b;
-      line-height: 1.7;
-      box-decoration-break: clone;
-      -webkit-box-decoration-break: clone;
-      font-weight: 600;
+    .slide-file {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #dbeafe;
+    }
+
+    .slide-day-badge {
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: #c7d2fe;
+      background: rgba(99, 102, 241, 0.18);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .slide-frame {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      background: linear-gradient(145deg, #1a2744, #0f1f3d);
+    }
+
+    .pdf-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #0b1220;
+    }
+
+    .slide-page-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+
+    .slide-footer {
+      min-height: 36px;
+      padding: 0 10px;
+      border-top: 1px solid rgba(129, 140, 248, 0.18);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .slide-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-nav-button,
+    .highlight-button {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(15, 23, 42, 0.5);
+      cursor: pointer;
+      font-weight: 800;
+      transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+
+    .slide-nav-button {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+    }
+
+    .highlight-button {
+      min-height: 28px;
+      padding: 0 12px;
+      font-size: 0.75rem;
+    }
+
+    .slide-nav-button:hover,
+    .highlight-button:hover {
+      border-color: rgba(129, 140, 248, 0.58);
+      background: rgba(99, 102, 241, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .ocr-panel {
+      flex: 1;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.72);
+    }
+
+    .ocr-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 42px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      color: #dbeafe;
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .ocr-status {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ocr-text {
+      flex: 1;
+      overflow: auto;
+      padding: 14px;
+      color: #dbeafe;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      user-select: text;
+      cursor: text;
+      font-size: 0.9rem;
     }
 
     .chat-panel {
@@ -476,6 +632,20 @@
         flex-direction: column;
       }
 
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .lesson-selector {
+        width: 100%;
+      }
+
+      .slide-selectors {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
       .workspace {
         grid-template-columns: 1fr;
       }
@@ -484,8 +654,8 @@
         min-height: auto;
       }
 
-      .document {
-        max-height: 430px;
+      .slide-viewer {
+        max-height: none;
       }
 
       .bubble,
@@ -506,9 +676,12 @@
         padding: 16px;
       }
 
-      .document {
-        padding: 20px;
-        font-size: 0.92rem;
+      .slide-viewer {
+        min-height: 230px;
+      }
+
+      .ocr-text {
+        font-size: 0.84rem;
       }
 
       .composer {
@@ -543,28 +716,37 @@
       <article class="panel slide-panel">
         <header class="panel-header">
           <h2>📄 Nội dung bài giảng</h2>
-          <span class="mini-meta">Slide Viewer</span>
+          <div class="slide-selectors">
+            <select id="daySelect" class="lesson-selector" aria-label="Chọn ngày học"></select>
+            <select id="slideSelect" class="lesson-selector" aria-label="Chọn slide"></select>
+          </div>
         </header>
         <div class="slide-body">
-          <div class="document" aria-label="Mock slide content" tabindex="0">
-            <pre>[Trang 14 — Day 1: LLM Foundation]
-
-Few-shot Prompting là kỹ thuật cung cấp một vài ví dụ mẫu (examples) trong prompt để giúp model hiểu định dạng đầu ra mong muốn, thay vì chỉ mô tả yêu cầu bằng ngôn ngữ tự nhiên.
-
-Ví dụ:
-Input: "Great product!"  → Output: Positive
-Input: "Terrible quality" → Output: Negative
-Input: "Giao hàng chậm"  → Output: ???
-
-Zero-shot Prompting: Không có ví dụ, model tự suy luận từ mô tả nhiệm vụ.
-One-shot Prompting: Cung cấp đúng 1 ví dụ.
-Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
+          <div class="slide-viewer" aria-label="Slide viewer" tabindex="0">
+            <div class="slide-topbar">
+              <span class="slide-file" id="slideFileName">day01-llm-foundation.pdf</span>
+              <span class="slide-day-badge" id="slideDayBadge">Day 1 · 0 trang</span>
+            </div>
+            <div class="slide-frame" id="slideFrame">
+              <iframe class="pdf-frame" id="pdfFrame" title="PDF slide viewer"></iframe>
+              <div class="slide-page-badge" id="slidePageBadge">Trang 14</div>
+            </div>
+            <div class="slide-footer">
+              <div class="slide-nav" aria-label="Điều hướng slide">
+                <button class="slide-nav-button" id="prevSlide" type="button" aria-label="Trang trước">←</button>
+                <span id="slideCounter">Trang 1 / 3</span>
+                <button class="slide-nav-button" id="nextSlide" type="button" aria-label="Trang sau">→</button>
+              </div>
+              <button class="highlight-button" id="highlightSlide" type="button">Highlight</button>
+            </div>
           </div>
-
-          <div class="selection-card">
-            <label>✏️ Đoạn bạn đang bôi đen:</label>
-            <span class="highlight">Few-shot Prompting là kỹ thuật cung cấp một vài ví dụ mẫu...</span>
-          </div>
+          <section class="ocr-panel" aria-label="OCR text của slide hiện tại">
+            <header class="ocr-header">
+              <span>OCR text của slide hiện tại</span>
+              <span class="ocr-status" id="ocrStatus">Đang tải...</span>
+            </header>
+            <div class="ocr-text" id="ocrText" tabindex="0"></div>
+          </section>
         </div>
       </article>
 
@@ -678,14 +860,7 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
         });
         console.log("✅ .env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
       } catch (err) {
-        console.error("❌ Không đọc được .env:", err.message);
-        document.body.innerHTML = `
-          <div style="max-width:600px;margin:80px auto;padding:32px;background:#1e293b;border-radius:12px;color:#fca5a5;font-family:Inter,sans-serif;text-align:center">
-            <h2 style="color:#f87171">⚠️ Không đọc được file .env</h2>
-            <p style="color:#cbd5e1;line-height:1.7">Bạn cần chạy qua HTTP server, không mở file trực tiếp.</p>
-            <pre style="background:#0f172a;padding:16px;border-radius:8px;color:#a5f3fc;text-align:left;font-size:0.9rem">cd ${location.pathname.includes('/codebase/') ? '.. (thư mục gốc project)' : '.'}\npython3 -m http.server 8000\n\n# Mở trình duyệt:\nhttp://localhost:8000/codebase/index.html</pre>
-          </div>`;
-        return;
+        console.warn("Không đọc được .env, app vẫn chạy ở chế độ không API key:", err.message);
       }
 
       /* ───────── 2. DOM refs ───────── */
@@ -694,20 +869,35 @@ Few-shot Prompting: Cung cấp 2–5 ví dụ.</pre>
       const questionInput = document.querySelector("#questionInput");
       const sendButton = document.querySelector("#sendButton");
       const providerSelect = document.querySelector("#providerSelect");
+      const daySelect = document.querySelector("#daySelect");
+      const slideSelect = document.querySelector("#slideSelect");
+      const slideViewer = document.querySelector(".slide-viewer");
+      const slideFileName = document.querySelector("#slideFileName");
+      const slideDayBadge = document.querySelector("#slideDayBadge");
+      const pdfFrame = document.querySelector("#pdfFrame");
+      const slidePageBadge = document.querySelector("#slidePageBadge");
+      const slideCounter = document.querySelector("#slideCounter");
+      const prevSlide = document.querySelector("#prevSlide");
+      const nextSlide = document.querySelector("#nextSlide");
+      const highlightSlide = document.querySelector("#highlightSlide");
+      const ocrText = document.querySelector("#ocrText");
+      const ocrStatus = document.querySelector("#ocrStatus");
 
       /* ───────── 3. Slide context & System prompt ───────── */
-      const SLIDE_CONTEXT = `[Trang 14 — Day 1: LLM Foundation]
-Few-shot Prompting là kỹ thuật cung cấp một vài ví dụ mẫu (examples) trong prompt để giúp model hiểu định dạng đầu ra mong muốn, thay vì chỉ mô tả yêu cầu bằng ngôn ngữ tự nhiên.
-Zero-shot Prompting: Không có ví dụ, model tự suy luận từ mô tả nhiệm vụ.
-One-shot Prompting: Cung cấp đúng 1 ví dụ.
-Few-shot Prompting: Cung cấp 2–5 ví dụ.`;
+      let SLIDES = [];
+      let SLIDE_DAYS = [];
+      let SLIDE_CONTEXT = "";
+      let SYSTEM_PROMPT = "";
+      let currentSlideIndex = 0;
+      const ocrCache = new Map();
 
-      const SYSTEM_PROMPT = `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide và vừa bôi đen một đoạn rồi hỏi bạn.
+      function buildSystemPrompt(slideContext) {
+        return `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide và vừa bôi đen một đoạn rồi hỏi bạn.
 Tài liệu slide học viên đang xem:
-${SLIDE_CONTEXT}
+${slideContext}
 Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc JSON sau, không thêm gì khác ngoài JSON:
 {
-  "answer": "Câu trả lời giải thích khái niệm, kèm [trang 14] nếu có căn cứ trong tài liệu. Nếu không có căn cứ, ghi rõ 'thông tin này ngoài tài liệu hiện tại'.",
+  "answer": "Câu trả lời giải thích khái niệm, kèm citation trang tương ứng nếu có căn cứ trong tài liệu. Nếu không có căn cứ, ghi rõ 'thông tin này ngoài tài liệu hiện tại'.",
   "has_misconception": true hoặc false,
   "misconception": "Chỉ điền nếu has_misconception=true: mô tả ngắn gọn học viên đang nhầm điểm gì và đúng phải là gì, kèm citation nếu có. Nếu false, để chuỗi rỗng.",
   "check_question": "1 câu hỏi ngắn kiểm tra xem học viên đã hiểu đúng chưa. Phải liên quan trực tiếp đến câu hỏi vừa được hỏi."
@@ -716,6 +906,150 @@ Quy tắc:
 - has_misconception = true CHỈ KHI câu hỏi ẩn chứa nhầm lẫn rõ ràng. Đừng flag false positive.
 - Nếu câu hỏi quá ngắn/mơ hồ (dưới 10 chữ): answer = "Bạn đang thắc mắc về phần nào cụ thể? Hãy mô tả thêm để mình hỗ trợ chính xác hơn.", has_misconception = false, check_question = "".
 - Luôn dùng tiếng Việt, giọng thân thiện như mentor, không học thuật cứng nhắc.`;
+      }
+
+      function getPdfUrl(lesson) {
+        const staticUrl = `../data/vlearn-pack/slides/${lesson.pdf}#page=${lesson.page}&toolbar=0&navpanes=0&view=FitH`;
+        return staticUrl;
+      }
+
+      function getPromptContext(lesson, text) {
+        const ocr = text && text.trim()
+          ? text.trim()
+          : `Chưa có OCR text cho ${lesson.day_title || lesson.dayTitle} — trang ${lesson.page}.`;
+        return `[${lesson.day_title || lesson.dayTitle} — Trang ${lesson.page}]
+PDF: ${lesson.pdf}
+OCR text đang hiển thị:
+${ocr}`;
+      }
+
+      async function loadOcrText(lesson) {
+        ocrStatus.textContent = "Đang OCR...";
+        ocrText.textContent = "Đang trích xuất text từ PDF...";
+        SLIDE_CONTEXT = getPromptContext(lesson, "");
+        SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
+
+        if (ocrCache.has(lesson.id)) {
+          const cached = ocrCache.get(lesson.id);
+          ocrText.textContent = cached;
+          ocrStatus.textContent = "Đã tải OCR";
+          SLIDE_CONTEXT = getPromptContext(lesson, cached);
+          SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
+          return;
+        }
+
+        if (location.protocol === "file:") {
+          ocrText.textContent = "Cần chạy qua backend `py codebase/server.py` để lấy OCR text.";
+          ocrStatus.textContent = "Chưa có backend";
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/ocr?slide=${encodeURIComponent(lesson.id)}`);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          const text = data.text?.trim() || `Không tìm thấy text cho ${lesson.title}.`;
+          ocrCache.set(lesson.id, text);
+          ocrText.textContent = text;
+          ocrStatus.textContent = data.source ? `Nguồn: ${data.source}` : "Đã tải OCR";
+          SLIDE_CONTEXT = getPromptContext(lesson, text);
+          SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
+        } catch (err) {
+          console.warn("Không tải được OCR endpoint, dùng fallback:", err);
+          const fallback = `Không tải được OCR cho ${lesson.title}.\nPDF: ${lesson.pdf}\nTrang: ${lesson.page}`;
+          ocrText.textContent = fallback;
+          SLIDE_CONTEXT = getPromptContext(lesson, fallback);
+          SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
+          ocrStatus.textContent = "OCR lỗi";
+        }
+      }
+
+      function renderSlide(index) {
+        if (!SLIDES.length) return;
+        currentSlideIndex = (index + SLIDES.length) % SLIDES.length;
+        const lesson = SLIDES[currentSlideIndex];
+        SLIDE_CONTEXT = getPromptContext(lesson, "");
+        SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
+        daySelect.value = lesson.day_id;
+        populateSlideSelect(lesson.day_id, lesson.id);
+        slideFileName.textContent = lesson.file;
+        slideDayBadge.textContent = `${lesson.badge || lesson.day_title} · ${lesson.page_count} trang`;
+        slideCounter.textContent = `Trang ${lesson.page} / ${lesson.page_count}`;
+        slidePageBadge.textContent = `Trang ${lesson.page} / ${lesson.page_count}`;
+        pdfFrame.src = getPdfUrl(lesson);
+        questionInput.placeholder = `Trang ${lesson.page}: chọn nội dung trên PDF/OCR rồi gõ câu hỏi của bạn...`;
+        questionInput.dataset.selection = "";
+        loadOcrText(lesson);
+      }
+
+      function populateDaySelect() {
+        daySelect.innerHTML = SLIDE_DAYS
+          .map(day => `<option value="${day.id}">${day.title}</option>`)
+          .join("");
+      }
+
+      function populateSlideSelect(dayId, selectedSlideId) {
+        const day = SLIDE_DAYS.find(item => item.id === dayId) || SLIDE_DAYS[0];
+        const slides = day ? day.slides : [];
+        slideSelect.innerHTML = slides
+          .map(slide => `<option value="${slide.id}">${slide.title}</option>`)
+          .join("");
+        if (selectedSlideId) {
+          slideSelect.value = selectedSlideId;
+        }
+      }
+
+      function renderSelectedSlide() {
+        const selectedIndex = SLIDES.findIndex(slide => slide.id === slideSelect.value);
+        renderSlide(selectedIndex === -1 ? 0 : selectedIndex);
+      }
+
+      async function loadSlideMetadata() {
+        ocrStatus.textContent = "Đang tải danh sách slide...";
+        try {
+          const res = await fetch("/api/slides");
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          SLIDE_DAYS = data.days || [];
+          SLIDES = SLIDE_DAYS.flatMap(day => day.slides || []);
+          if (!SLIDES.length) throw new Error("Không có slide trong metadata.");
+          populateDaySelect();
+          populateSlideSelect(SLIDE_DAYS[0].id, SLIDES[0].id);
+          renderSlide(0);
+        } catch (err) {
+          console.error("Không tải được /api/slides:", err);
+          slideFileName.textContent = "Không tải được slide metadata";
+          slideDayBadge.textContent = "Backend";
+          slideCounter.textContent = "Trang 0 / 0";
+          slidePageBadge.textContent = "No slide";
+          ocrText.textContent = "Không tải được danh sách slide. Hãy chạy backend bằng: py codebase/server.py";
+          ocrStatus.textContent = "Metadata lỗi";
+        }
+      }
+
+      daySelect.addEventListener("change", () => {
+        populateSlideSelect(daySelect.value);
+        renderSelectedSlide();
+      });
+      slideSelect.addEventListener("change", renderSelectedSlide);
+      prevSlide.addEventListener("click", () => renderSlide(currentSlideIndex - 1));
+      nextSlide.addEventListener("click", () => renderSlide(currentSlideIndex + 1));
+      highlightSlide.addEventListener("click", () => questionInput.focus());
+      function captureSelection() {
+        const selected = window.getSelection().toString().trim();
+        if (selected.length > 10) {
+          const preview = selected.length > 40 ? `${selected.substring(0, 40)}...` : selected;
+          questionInput.placeholder = `Bôi đen: "${preview}" — gõ câu hỏi của bạn`;
+          questionInput.dataset.selection = selected;
+          if (!questionInput.value.trim()) {
+            questionInput.value = `Về đoạn: "${preview}"\n`;
+          }
+          questionInput.focus();
+        }
+      }
+
+      slideViewer.addEventListener("mouseup", captureSelection);
+      ocrText.addEventListener("mouseup", captureSelection);
 
       /* ───────── 4. Multi-provider adapters ───────── */
       const PROVIDERS = {
@@ -981,6 +1315,7 @@ Quy tắc:
       /* ───────── 8. Init ───────── */
       initProviderSelector();
       wireTutorActions();
+      loadSlideMetadata();
     })();
   </script>
 </body>

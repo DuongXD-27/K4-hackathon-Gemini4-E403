@@ -1,0 +1,20 @@
+{
+  "days": [
+    {
+      "id": "day1",
+      "title": "Day 1",
+      "badge": "Day 1",
+      "pdf": "d1-slide-hackathon.pdf",
+      "page_count": 29,
+      "slide_title_prefix": "Day 1 — Slide"
+    },
+    {
+      "id": "day2",
+      "title": "Day 2",
+      "badge": "Day 2",
+      "pdf": "d2-slide-hackathon.pdf",
+      "page_count": 29,
+      "slide_title_prefix": "Day 2 — Slide"
+    }
+  ]
+}
