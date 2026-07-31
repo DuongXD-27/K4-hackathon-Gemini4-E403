@@ -8,6 +8,7 @@
   const composer         = document.getElementById("composer");
   const questionInput    = document.getElementById("questionInput");
   const sendButton       = document.getElementById("sendButton");
+  const themeSelect      = document.getElementById("themeSelect");
   const providerSelect   = document.getElementById("providerSelect");
   const slideHtmlFrame   = document.getElementById("slideHtmlFrame");
   const selectionPill    = document.getElementById("selectionPill");
@@ -113,7 +114,20 @@ Ví dụ 3 (misconception_confidence = "low"):
     }
   });
 
-  /* ── 5. Provider selector (dữ liệu nạp từ HTML tĩnh, key ở backend) ── */
+  /* ── 5. Theme & Provider selectors ── */
+  function initThemeSelector() {
+    const savedTheme = localStorage.getItem("app-theme") || "dark";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    if (themeSelect) {
+      themeSelect.value = savedTheme;
+      themeSelect.addEventListener("change", (e) => {
+        const theme = e.target.value;
+        document.documentElement.setAttribute("data-theme", theme);
+        localStorage.setItem("app-theme", theme);
+      });
+    }
+  }
+
   function initProviderSelector() {
     // Chỉ để frontend hiển thị UI bình thường
   }
@@ -303,6 +317,7 @@ Ví dụ 3 (misconception_confidence = "low"):
   let RECENTLY_SKIPPED_COUNT = 0;
 
   /* ── 9. Init ── */
+  initThemeSelector();
   initProviderSelector();
   wireTutorActions();
 
