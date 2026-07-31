@@ -30,7 +30,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
     5. `[T1098]` Student hỏi về đoạn code few-shot prompting → Tutor trả lời review_concept nhưng citations = [] (rating: down)
     6. (Ngược lại) Up-rated turns: khi tutor có citation `[trang 17]`, `[trang 43]` → học viên rate up
   - **Phương pháp đếm:** Đọc toàn bộ file CSV, lọc theo field `asked_check_question`, `misconceptions`, `follow_ups`, `rating`; keyword search "rất tiếc"/"xin lỗi"/"không tìm thấy" trong cột `content` của role=tutor. Script tại `eval/analyze_chatlog.py`.
-  - **Bằng chứng đường A (khảo sát):** Kết quả khảo sát Google Form — xem ảnh bên dưới
+  - **Bằng chứng đường A (khảo sát):** Kết quả khảo sát Google Form trên 23 học viên đã từng sử dụng VLearn:
     - n = 23, 100% có câu 3 ≥ 3 điểm (xác nhận pain), 96% có câu 4+5 ≥ 4 (willing to use)
 
   ![Kết quả khảo sát người dùng](survey.png)
@@ -164,9 +164,9 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 | Validation + demo script | Phong |
 
 **Willing users (≥3 tên cụ thể — xác nhận trước CP1):**
-- Nguyễn Tuấn Dương — học viên khoá AI Thực Chiến (nhóm Gemini4)
-- Tạ Quốc Tuấn — học viên khoá AI Thực Chiến (nhóm Gemini4)
-- Lý Nhật Huy — học viên khoá AI Thực Chiến (nhóm Gemini4)
+- Nguyễn Văn Hiệp - 2A202601488
+- Lý Nhật Huy - 2A202601450
+- Nguyễn Vũ Hà An - 2A202601692
 
 **Kế hoạch validation CP5:**
 - Task giao: "Dùng cái này để hiểu đoạn slide sau" (giao đoạn slide thật từ data pack)
