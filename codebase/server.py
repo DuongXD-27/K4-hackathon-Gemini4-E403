@@ -17,6 +17,7 @@ PORT = int(os.environ.get("PORT", "8000"))
 ROOT = Path(__file__).resolve().parents[1]
 CODEBASE = ROOT / "codebase"
 SLIDES_DIR = ROOT / "data" / "vlearn-pack" / "slides"
+HTML_SLIDES_DIR = ROOT / "data" / "vlearn-pack" / "slides"
 MANIFEST_PATH = ROOT / "data" / "slide_manifest.json"
 OCR_CACHE_DIR = ROOT / "data" / "ocr-cache"
 
@@ -281,6 +282,16 @@ class Handler(BaseHTTPRequestHandler):
                 return
             text, source = extract_slide_text(slide_id)
             self.send_json({"slide": slide_id, "text": text, "source": source})
+            return
+
+        # Serve HTML slide files (must come before PDF route — same prefix /slides/)
+        if path.startswith("/slides/") and path.endswith(".html"):
+            name = Path(path.removeprefix("/slides/")).name
+            html_path = HTML_SLIDES_DIR / name
+            if not html_path.exists():
+                self.send_error(404, f"HTML slide not found: {name}")
+                return
+            self.send_file(html_path, "text/html; charset=utf-8")
             return
 
         if path.startswith("/slides/"):

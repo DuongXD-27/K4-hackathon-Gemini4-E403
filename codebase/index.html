@@ -180,23 +180,15 @@
       color: #e2e8f0;
     }
 
-    .slide-selectors {
-      display: grid;
-      grid-template-columns: minmax(120px, 0.55fr) minmax(160px, 1fr);
-      gap: 8px;
-      width: min(100%, 500px);
-    }
-
     .workspace {
       display: grid;
-      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
       gap: 22px;
-      align-items: stretch;
+      align-items: start;
     }
 
     .panel {
       min-width: 0;
-      min-height: 680px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: linear-gradient(180deg, rgba(23, 32, 51, 0.94), rgba(18, 24, 38, 0.96));
@@ -230,112 +222,79 @@
     .slide-panel {
       display: flex;
       flex-direction: column;
+      /* Stick slide viewer on screen — chat can scroll independently */
+      position: sticky;
+      top: 28px;
     }
 
     .slide-body {
       display: flex;
-      flex: 1;
       flex-direction: column;
-      gap: 14px;
-      padding: 22px;
       min-height: 0;
+      padding: 0;
     }
 
-    .slide-viewer {
-      flex: 0 0 auto;
-      border-radius: 10px;
-      overflow: hidden;
+    /* HTML slide iframe viewer */
+    .html-slide-wrapper {
+      flex: 1;
+      position: relative;
+      min-height: 0;
       display: flex;
       flex-direction: column;
-      background: #0b1220;
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      aspect-ratio: 16 / 9;
-      max-height: 360px;
-      min-height: 260px;
-      user-select: text;
-      cursor: text;
     }
 
-    .slide-topbar,
-    .slide-footer {
+    .html-slide-hint {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      flex: 0 0 auto;
-      color: #cbd5e1;
-      background: rgba(99, 102, 241, 0.16);
-      border-color: rgba(129, 140, 248, 0.18);
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(99, 102, 241, 0.1);
+      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+      font-size: 0.8rem;
+      color: #a5b4fc;
+      font-weight: 500;
+      flex-shrink: 0;
     }
 
-    .slide-topbar {
-      min-height: 40px;
-      padding: 0 14px;
-      border-bottom: 1px solid rgba(129, 140, 248, 0.18);
+    .html-slide-hint .hint-icon {
+      font-size: 1rem;
+    }
+
+    .selection-pill {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(99, 102, 241, 0.25);
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      border-radius: 999px;
       font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .slide-file {
+      color: #c7d2fe;
+      margin-left: auto;
+      max-width: 260px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      color: #dbeafe;
     }
 
-    .slide-day-badge {
-      border: 1px solid rgba(129, 140, 248, 0.4);
-      border-radius: 999px;
-      padding: 3px 9px;
-      color: #c7d2fe;
-      background: rgba(99, 102, 241, 0.18);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
+    .selection-pill.active {
+      display: flex;
     }
 
-    .slide-frame {
-      position: relative;
-      flex: 1;
-      min-height: 0;
-      overflow: hidden;
-      background: linear-gradient(145deg, #1a2744, #0f1f3d);
-    }
-
-    .pdf-frame {
+    .html-slide-frame {
       width: 100%;
-      height: 100%;
       border: 0;
-      background: #0b1220;
+      /* Height = 1.5 slides at 16:9. Since iframe width ≈ 100% of panel,
+         1 slide height = (panelWidth / 16 * 9). We set a fixed px that fits ~1.5 slides.
+         Using aspect-ratio trick: 1 slide = 56.25vw * panelRatio / 16 * 9.
+         Simpler: just use a fixed height that looks like 1.5 slides */
+      height: calc(56.25% * 1.5);
+      min-height: 480px;
+      max-height: 640px;
+      background: #f8fafc;
+      display: block;
     }
 
-    .slide-page-badge {
-      position: absolute;
-      bottom: 10px;
-      right: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 4px;
-      padding: 2px 8px;
-      font-size: 0.72rem;
-      color: #94a3b8;
-    }
-
-    .slide-footer {
-      min-height: 36px;
-      padding: 0 10px;
-      border-top: 1px solid rgba(129, 140, 248, 0.18);
-      font-size: 0.78rem;
-      font-weight: 700;
-    }
-
-    .slide-nav {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .slide-nav-button,
     .highlight-button {
       border: 1px solid rgba(148, 163, 184, 0.22);
       border-radius: 999px;
@@ -347,6 +306,7 @@
     }
 
     .slide-nav-button {
+      display: none;
       width: 28px;
       height: 28px;
       padding: 0;
@@ -411,6 +371,61 @@
     .chat-panel {
       display: flex;
       flex-direction: column;
+      min-height: 680px;
+    }
+
+    /* Selection display box — shows highlighted text separately from chat input */
+    .selection-display {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 10px 14px;
+      margin: 0 16px 0;
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .selection-display.active {
+      display: flex;
+    }
+
+    .selection-display-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #818cf8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .selection-clear-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.78rem;
+      padding: 0 4px;
+      line-height: 1;
+      border-radius: 4px;
+      transition: color 140ms ease;
+    }
+
+    .selection-clear-btn:hover {
+      color: #f87171;
+    }
+
+    .selection-display-text {
+      font-size: 0.84rem;
+      color: #c7d2fe;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      max-height: 80px;
+      overflow-y: auto;
+      word-break: break-word;
     }
 
     .chat-stream {
@@ -540,12 +555,18 @@
     }
 
     .composer {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px 16px 16px;
+      border-top: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.58);
+    }
+
+    .composer-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 12px;
-      padding: 16px;
-      border-top: 1px solid var(--line);
-      background: rgba(15, 23, 42, 0.58);
     }
 
     .composer textarea {
@@ -710,37 +731,23 @@
       <article class="panel slide-panel">
         <header class="panel-header">
           <h2>📄 Nội dung bài giảng</h2>
-          <div class="slide-selectors">
-            <select id="daySelect" class="lesson-selector" aria-label="Chọn ngày học"></select>
-            <select id="slideSelect" class="lesson-selector" aria-label="Chọn slide"></select>
-          </div>
+          <span class="mini-meta">AI in Action — Day 1 &amp; Day 2</span>
         </header>
         <div class="slide-body">
-          <div class="slide-viewer" aria-label="Slide viewer" tabindex="0">
-            <div class="slide-topbar">
-              <span class="slide-file" id="slideFileName">day01-llm-foundation.pdf</span>
-              <span class="slide-day-badge" id="slideDayBadge">Day 1 · 0 trang</span>
+          <div class="html-slide-wrapper">
+            <div class="html-slide-hint">
+              <span class="hint-icon">✍️</span>
+              <span>Bôi đen bất kỳ đoạn nào bên dưới → AI sẽ đọc đoạn đó làm ngữ cảnh</span>
+              <span class="selection-pill" id="selectionPill">📌 <span id="selectionPreview"></span></span>
             </div>
-            <div class="slide-frame" id="slideFrame">
-              <iframe class="pdf-frame" id="pdfFrame" title="PDF slide viewer"></iframe>
-              <div class="slide-page-badge" id="slidePageBadge">Trang 14</div>
-            </div>
-            <div class="slide-footer">
-              <div class="slide-nav" aria-label="Điều hướng slide">
-                <button class="slide-nav-button" id="prevSlide" type="button" aria-label="Trang trước">←</button>
-                <span id="slideCounter">Trang 1 / 3</span>
-                <button class="slide-nav-button" id="nextSlide" type="button" aria-label="Trang sau">→</button>
-              </div>
-              <button class="highlight-button" id="highlightSlide" type="button">Highlight</button>
-            </div>
+            <iframe
+              id="slideHtmlFrame"
+              class="html-slide-frame"
+              src="/slides/ai_in_action_slides.html"
+              title="AI in Action slide viewer"
+              sandbox="allow-same-origin allow-scripts"
+            ></iframe>
           </div>
-          <section class="ocr-panel" aria-label="OCR text của slide hiện tại">
-            <header class="ocr-header">
-              <span>OCR text của slide hiện tại</span>
-              <span class="ocr-status" id="ocrStatus">Đang tải...</span>
-            </header>
-            <div class="ocr-text" id="ocrText" tabindex="0"></div>
-          </section>
         </div>
       </article>
 
@@ -788,8 +795,17 @@
         </div>
 
         <form class="composer" id="composer">
-          <textarea id="questionInput" placeholder="Bôi đen đoạn slide bên trái rồi gõ câu hỏi của bạn..." rows="2"></textarea>
-          <button class="send" id="sendButton" type="submit">Gửi ➤</button>
+          <div class="selection-display" id="selectionDisplay">
+            <div class="selection-display-label">
+              <span>✍️ Đoạn đang bôi đen (ngữ cảnh AI)</span>
+              <button class="selection-clear-btn" id="selectionClearBtn" type="button" title="Xóa bôi đen">✕ Xóa</button>
+            </div>
+            <div class="selection-display-text" id="selectionDisplayText"></div>
+          </div>
+          <div class="composer-row">
+            <textarea id="questionInput" placeholder="Bôi đen đoạn slide bên trái rồi gõ câu hỏi của bạn..." rows="2"></textarea>
+            <button class="send" id="sendButton" type="submit">Gửi ➤</button>
+          </div>
         </form>
       </article>
     </section>
@@ -823,37 +839,25 @@
       const questionInput = document.querySelector("#questionInput");
       const sendButton = document.querySelector("#sendButton");
       const providerSelect = document.querySelector("#providerSelect");
-      const daySelect = document.querySelector("#daySelect");
-      const slideSelect = document.querySelector("#slideSelect");
-      const slideViewer = document.querySelector(".slide-viewer");
-      const slideFileName = document.querySelector("#slideFileName");
-      const slideDayBadge = document.querySelector("#slideDayBadge");
-      const pdfFrame = document.querySelector("#pdfFrame");
-      const slidePageBadge = document.querySelector("#slidePageBadge");
-      const slideCounter = document.querySelector("#slideCounter");
-      const prevSlide = document.querySelector("#prevSlide");
-      const nextSlide = document.querySelector("#nextSlide");
-      const highlightSlide = document.querySelector("#highlightSlide");
-      const ocrText = document.querySelector("#ocrText");
-      const ocrStatus = document.querySelector("#ocrStatus");
+      const slideHtmlFrame = document.querySelector("#slideHtmlFrame");
+      const selectionPill = document.querySelector("#selectionPill");
+      const selectionPreview = document.querySelector("#selectionPreview");
 
       /* ───────── 3. Slide context & System prompt ───────── */
-      let SLIDES = [];
-      let SLIDE_DAYS = [];
-      let SLIDE_CONTEXT = "";
+      let SLIDE_CONTEXT = "(Chưa có đoạn nào được bôi đen.)";
       let SYSTEM_PROMPT = "";
-      let currentSlideIndex = 0;
-      const ocrCache = new Map();
 
-      function buildSystemPrompt(slideContext) {
-        return `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide và vừa bôi đen một đoạn rồi hỏi bạn.
-Tài liệu slide học viên đang xem:
-${slideContext}
+      function buildSystemPrompt(selectedText) {
+        const ctx = selectedText && selectedText.trim()
+          ? `Đoạn slide học viên đang bôi đen:\n---\n${selectedText.trim()}\n---`
+          : "(Học viên chưa bôi đen đoạn nào cụ thể. Hãy gợi ý họ bôi đen nội dung muốn hỏi.)";
+        return `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide HTML và vừa bôi đen một đoạn rồi hỏi bạn.
+${ctx}
 Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc JSON sau, không thêm gì khác ngoài JSON:
 {
-  "answer": "Câu trả lời giải thích khái niệm, kèm citation trang tương ứng nếu có căn cứ trong tài liệu. Nếu không có căn cứ, ghi rõ 'thông tin này ngoài tài liệu hiện tại'.",
+  "answer": "Câu trả lời giải thích khái niệm, dựa vào đoạn bôi đen nếu có. Nếu không có căn cứ trong đoạn, ghi rõ 'thông tin này ngoài đoạn đang xem'.",
   "has_misconception": true hoặc false,
-  "misconception": "Chỉ điền nếu has_misconception=true: mô tả ngắn gọn học viên đang nhầm điểm gì và đúng phải là gì, kèm citation nếu có. Nếu false, để chuỗi rỗng.",
+  "misconception": "Chỉ điền nếu has_misconception=true: mô tả ngắn gọn học viên đang nhầm điểm gì và đúng phải là gì. Nếu false, để chuỗi rỗng.",
   "check_question": "1 câu hỏi ngắn kiểm tra xem học viên đã hiểu đúng chưa. Phải liên quan trực tiếp đến câu hỏi vừa được hỏi."
 }
 Quy tắc:
@@ -862,148 +866,49 @@ Quy tắc:
 - Luôn dùng tiếng Việt, giọng thân thiện như mentor, không học thuật cứng nhắc.`;
       }
 
-      function getPdfUrl(lesson) {
-        return `../data/vlearn-pack/slides/${lesson.pdf}#page=${lesson.page}&toolbar=0&navpanes=0&view=FitH`;
-      }
+      // Khởi tạo SYSTEM_PROMPT ban đầu (chưa có selection)
+      SYSTEM_PROMPT = buildSystemPrompt("");
 
-      function getPromptContext(lesson, text) {
-        const ocr = text && text.trim()
-          ? text.trim()
-          : `Chưa có OCR text cho ${lesson.day_title || lesson.dayTitle} — trang ${lesson.page}.`;
-        return `[${lesson.day_title || lesson.dayTitle} — Trang ${lesson.page}]
-PDF: ${lesson.pdf}
-OCR text đang hiển thị:
-${ocr}`;
-      }
-
-      async function loadOcrText(lesson) {
-        ocrStatus.textContent = "Đang OCR...";
-        ocrText.textContent = "Đang trích xuất text từ PDF...";
-        SLIDE_CONTEXT = getPromptContext(lesson, "");
-        SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-
-        if (ocrCache.has(lesson.id)) {
-          const cached = ocrCache.get(lesson.id);
-          ocrText.textContent = cached;
-          ocrStatus.textContent = "Đã tải OCR";
-          SLIDE_CONTEXT = getPromptContext(lesson, cached);
-          SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-          return;
-        }
-
-        if (location.protocol === "file:") {
-          ocrText.textContent = "Cần chạy qua backend `py codebase/server.py` để lấy OCR text.";
-          ocrStatus.textContent = "Chưa có backend";
-          return;
-        }
-
-        try {
-          const res = await fetch(`/api/ocr?slide=${encodeURIComponent(lesson.id)}`);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          const text = data.text?.trim() || `Không tìm thấy text cho ${lesson.title}.`;
-          ocrCache.set(lesson.id, text);
-          ocrText.textContent = text;
-          ocrStatus.textContent = data.source ? `Nguồn: ${data.source}` : "Đã tải OCR";
-          SLIDE_CONTEXT = getPromptContext(lesson, text);
-          SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-        } catch (err) {
-          console.warn("Không tải được OCR endpoint, dùng fallback:", err);
-          const fallback = `Không tải được OCR cho ${lesson.title}.\nPDF: ${lesson.pdf}\nTrang: ${lesson.page}`;
-          ocrText.textContent = fallback;
-          SLIDE_CONTEXT = getPromptContext(lesson, fallback);
-          SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-          ocrStatus.textContent = "OCR lỗi";
-        }
-      }
-
-      function renderSlide(index) {
-        if (!SLIDES.length) return;
-        currentSlideIndex = (index + SLIDES.length) % SLIDES.length;
-        const lesson = SLIDES[currentSlideIndex];
-        SLIDE_CONTEXT = getPromptContext(lesson, "");
-        SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-        daySelect.value = lesson.day_id;
-        populateSlideSelect(lesson.day_id, lesson.id);
-        slideFileName.textContent = lesson.file;
-        slideDayBadge.textContent = `${lesson.badge || lesson.day_title} · ${lesson.page_count} trang`;
-        slideCounter.textContent = `Trang ${lesson.page} / ${lesson.page_count}`;
-        slidePageBadge.textContent = `Trang ${lesson.page} / ${lesson.page_count}`;
-        pdfFrame.src = getPdfUrl(lesson);
-        questionInput.placeholder = `Trang ${lesson.page}: chọn nội dung trên PDF/OCR rồi gõ câu hỏi của bạn...`;
-        questionInput.dataset.selection = "";
-        loadOcrText(lesson);
-      }
-
-      function populateDaySelect() {
-        daySelect.innerHTML = SLIDE_DAYS
-          .map(day => `<option value="${day.id}">${day.title}</option>`)
-          .join("");
-      }
-
-      function populateSlideSelect(dayId, selectedSlideId) {
-        const day = SLIDE_DAYS.find(item => item.id === dayId) || SLIDE_DAYS[0];
-        const slides = day ? day.slides : [];
-        slideSelect.innerHTML = slides
-          .map(slide => `<option value="${slide.id}">${slide.title}</option>`)
-          .join("");
-        if (selectedSlideId) {
-          slideSelect.value = selectedSlideId;
-        }
-      }
-
-      function renderSelectedSlide() {
-        const selectedIndex = SLIDES.findIndex(slide => slide.id === slideSelect.value);
-        renderSlide(selectedIndex === -1 ? 0 : selectedIndex);
-      }
-
-      async function loadSlideMetadata() {
-        ocrStatus.textContent = "Đang tải danh sách slide...";
-        try {
-          const res = await fetch("/api/slides");
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          SLIDE_DAYS = data.days || [];
-          SLIDES = SLIDE_DAYS.flatMap(day => day.slides || []);
-          if (!SLIDES.length) throw new Error("Không có slide trong metadata.");
-          populateDaySelect();
-          populateSlideSelect(SLIDE_DAYS[0].id, SLIDES[0].id);
-          renderSlide(0);
-        } catch (err) {
-          console.error("Không tải được /api/slides:", err);
-          slideFileName.textContent = "Không tải được slide metadata";
-          slideDayBadge.textContent = "Backend";
-          slideCounter.textContent = "Trang 0 / 0";
-          slidePageBadge.textContent = "No slide";
-          ocrText.textContent = "Không tải được danh sách slide. Hãy chạy backend bằng: py codebase/server.py";
-          ocrStatus.textContent = "Metadata lỗi";
-        }
-      }
-
-      daySelect.addEventListener("change", () => {
-        populateSlideSelect(daySelect.value);
-        renderSelectedSlide();
-      });
-      slideSelect.addEventListener("change", renderSelectedSlide);
-      prevSlide.addEventListener("click", () => renderSlide(currentSlideIndex - 1));
-      nextSlide.addEventListener("click", () => renderSlide(currentSlideIndex + 1));
-      highlightSlide.addEventListener("click", () => questionInput.focus());
-
+      /* ───────── 3b. Capture selection từ iframe ───────── */
       function captureSelection() {
-        const selected = window.getSelection().toString().trim();
+        let selected = "";
+        // Thử lấy selection từ bên trong iframe (same-origin)
+        try {
+          const iframeWin = slideHtmlFrame.contentWindow;
+          if (iframeWin) {
+            selected = (iframeWin.getSelection() || "").toString().trim();
+          }
+        } catch (e) {}
+        // Fallback: lấy từ main window
+        if (!selected) {
+          selected = window.getSelection().toString().trim();
+        }
         if (selected.length > 10) {
-          const preview = selected.length > 40 ? `${selected.substring(0, 40)}...` : selected;
-          questionInput.placeholder = `Bôi đen: "${preview}" — gõ câu hỏi của bạn`;
-          questionInput.dataset.selection = selected;
+          SLIDE_CONTEXT = selected;
+          SYSTEM_PROMPT = buildSystemPrompt(selected);
+          const preview = selected.length > 50 ? `${selected.substring(0, 50)}...` : selected;
+          selectionPreview.textContent = preview;
+          selectionPill.classList.add("active");
+          questionInput.placeholder = `Đã bôi đen "${preview.substring(0, 30)}..." — gõ câu hỏi của bạn`;
           if (!questionInput.value.trim()) {
-            questionInput.value = `Về đoạn: "${preview}"\n`;
+            questionInput.value = `Về đoạn: "${preview.substring(0, 40)}"\n`;
           }
           questionInput.focus();
         }
       }
 
-      slideViewer.addEventListener("mouseup", captureSelection);
-      ocrText.addEventListener("mouseup", captureSelection);
+      // Lắng nghe mouseup trên iframe khi đã load xong
+      slideHtmlFrame.addEventListener("load", () => {
+        try {
+          slideHtmlFrame.contentDocument.addEventListener("mouseup", captureSelection);
+        } catch (e) {
+          console.warn("Không thể attach mouseup vào iframe:", e);
+        }
+      });
+      // Cũng lắng nghe mouseup trên main document (khi focus ra ngoài iframe)
+      document.addEventListener("mouseup", (e) => {
+        if (e.target !== slideHtmlFrame) captureSelection();
+      });
 
       /* ───────── 4. Multi-provider adapters ───────── */
       const PROVIDERS = {
@@ -1269,7 +1174,7 @@ ${ocr}`;
       /* ───────── 8. Init ───────── */
       initProviderSelector();
       wireTutorActions();
-      loadSlideMetadata();
+      // Không cần load slide metadata nữa — HTML iframe tự load
     })();
   </script>
 </body>
