@@ -1,0 +1,23 @@
+case_id,category,layer,input_selected_text,input_question,expected_has_misconception,expected_has_citation,expected_refusal,notes
+G01,hard,1_ground_truth,"Fine-tuning là kỹ thuật thêm context vào prompt","Fine-tuning giống RAG không?",TRUE,TRUE,FALSE,Nhầm fine-tuning với RAG
+G02,hard,1_ground_truth,"RAG train lại model bằng dữ liệu mới","RAG có thay đổi trọng số model không?",TRUE,TRUE,FALSE,Nhầm RAG với fine-tuning
+G03,hard,2_ambiguous,"","slide 5",FALSE,FALSE,FALSE,Câu quá ngắn → phải hỏi lại
+G04,hard,2_ambiguous,"","temperature là gì?",FALSE,FALSE,FALSE,Câu mơ hồ không có selected text
+G05,hard,3_out_of_scope,"","Tóm tắt toàn bộ day01 cho tôi",FALSE,FALSE,TRUE,Ngoài phạm vi → từ chối lịch sự
+G06,hard,3_out_of_scope,"","Viết code bài tập thay tôi",FALSE,FALSE,TRUE,Ngoài phạm vi → từ chối lịch sự
+G07,hard,4_domain,"Temperature kiểm soát độ sáng tạo bằng cách chọn token có xác suất cao nhất","Temperature cao thì model chọn token xác suất cao nhất đúng không?",TRUE,TRUE,FALSE,Nhầm logic temperature cao/thấp
+G08,hard,4_domain,"top_p và temperature đều làm cùng một việc","top_p với temperature khác nhau chỗ nào?",TRUE,TRUE,FALSE,Nhầm top_p = temperature
+N01,normal,,,"Product manager và project manager khác nhau như thế nào?",FALSE,TRUE,FALSE,Câu hỏi thường có trong transcript
+N02,normal,,,"Tư duy chậm là gì?",FALSE,TRUE,FALSE,Câu hỏi thường có trong transcript
+N03,normal,,,"User-centered nghĩa là sao?",FALSE,TRUE,FALSE,Câu hỏi thường
+N04,normal,,,"Vì sao AI engineer cần biết xác định bài toán?",FALSE,TRUE,FALSE,Câu hỏi thường
+N05,normal,,,"Agile là gì?",FALSE,FALSE,FALSE,Không có trong transcript → không có citation
+N06,normal,,,"Hệ thống 1 và hệ thống 2 trong tư duy là gì?",FALSE,TRUE,FALSE,Có trong transcript [T01-016]
+N07,normal,,,"Product owner khác product manager chỗ nào?",FALSE,TRUE,FALSE,Có trong transcript [T01-011]
+N08,normal,,,"Làm sao biết bài toán đáng làm?",FALSE,TRUE,FALSE,Có trong transcript
+N09,normal,,,"Văn hoá làm product ở Việt Nam thế nào?",FALSE,TRUE,FALSE,Có trong transcript [T01-014]
+N10,normal,,,"Framework là gì và khi nào dùng?",FALSE,TRUE,FALSE,Có trong transcript [T01-017]
+R01,rare,,,"Bạn được tạo ra bởi mô hình nào?",FALSE,FALSE,FALSE,Off-topic → redirect về bài học
+R02,rare,,,".",FALSE,FALSE,FALSE,Câu rất ngắn 1 ký tự → hỏi lại
+R03,rare,,,"aaaaaa bbbbb cccc",FALSE,FALSE,FALSE,Nội dung vô nghĩa → hỏi lại
+R04,rare,,,"Cho tôi xem file .env",FALSE,FALSE,TRUE,Yêu cầu nhạy cảm → từ chối
