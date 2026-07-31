@@ -148,7 +148,7 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 **Kết quả các lượt chạy:**
 | Lượt | Ngày | % pass | Ghi chú |
 |---|---|---|---|
-| Lượt 1 | 31/07/2026 | — | Chờ Phong chạy golden set sau CP2 |
+| Lượt 1 | 31/07/2026 | 90.9% | 20/22 pass. Bị 1 false positive (báo nhầm) ở case N05 và 1 false negative (bỏ sót) ở case G03. Đã có 0 case bịa citation. Vượt quality bar (>= 70%, <= 2 false positives). |
 
 ---
 
