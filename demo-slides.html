@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehension Gap Detector - Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.5);
+            --card-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+        }
+
+        .deck-container {
+            width: 100vw;
+            max-width: 177.78vh;
+            /* 16:9 aspect ratio */
+            height: 56.25vw;
+            max-height: 100vh;
+            position: relative;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 5% 8%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: translateX(50px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .slide.prev {
+            transform: translateX(-50px) scale(0.95);
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2.8rem;
+            border-bottom: 2px solid var(--accent-glow);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        p,
+        li {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        ul {
+            margin-left: 30px;
+        }
+
+        li span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--accent-glow);
+        }
+
+        .tree {
+            font-family: monospace;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #a5b4fc;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .tree .dir {
+            color: #f472b6;
+            font-weight: bold;
+        }
+
+        .tree .file {
+            color: #38bdf8;
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        .btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="deck-container">
+        <!-- Slide 1 -->
+        <section class="slide active">
+            <h1 style="font-size: 4.5rem; margin-bottom: 30px;">Comprehension Gap Detector</h1>
+            <p style="text-align: center; font-size: 1.8rem; color: var(--accent);">Dự án Hackathon Gemini4 · Zone 3</p>
+            <p style="text-align: center; margin-top: 40px;">Bấm phím <strong>Mũi tên</strong> hoặc nút bên dưới để
+                chuyển slide</p>
+        </section>
+
+
+
+        <!-- Slide 3 -->
+        <section class="slide">
+            <h2>User & Core Job-To-Be-Done</h2>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Chân dung người dùng</h3>
+                    <p>Học viên khoá AI Thực Chiến, đang đọc tài liệu slide trên VLearn trong giờ học.</p>
+                    <p>Họ bôi đen đoạn văn và dùng AI tutor để hiểu các khái niệm kỹ thuật.</p>
+                </div>
+                <div class="card">
+                    <h3>Core JTBD</h3>
+                    <p>Học viên muốn <span>xác nhận mình đang hiểu đúng</span> một khái niệm kỹ thuật vừa đọc.</p>
+                    <p>Mục tiêu: Tiếp tục học phần tiếp theo mà không mang theo những hiểu lầm tiềm ẩn dẫn đến sai sót
+                        khi làm Lab.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4 -->
+        <section class="slide">
+            <h2>Vấn đề & Bằng chứng thực tế</h2>
+            <div class="card" style="margin-bottom: 20px;">
+                <h3>Problem Statement</h3>
+                <p>Câu hỏi của học viên thường ẩn chứa <span>hiểu lầm (misconception)</span> mà AI Tutor mặc định không
+                    phát hiện ra. Điều này khiến học viên học sai kiến thức, phải tốn 15-30 phút unlearn sau này.</p>
+            </div>
+            <div class="grid-2" style="margin-top: 10px; gap: 20px;">
+                <div class="card" style="padding: 20px;">
+                    <h3 style="font-size: 1.5rem;">Data Mining (1.261 turns)</h3>
+                    <ul>
+                        <li>AI chủ động kiểm tra: <span>0.24%</span> (3/1.261)</li>
+                        <li>Misconception Field: <span>Trống (0)</span></li>
+                        <li>Tutor từ chối trả lời: <span>23.9%</span></li>
+                    </ul>
+                </div>
+                <div class="card" style="padding: 20px;">
+                    <h3 style="font-size: 1.5rem;">Khảo sát (Survey)</h3>
+                    <ul>
+                        <li>100% người dùng xác nhận Pain-point.</li>
+                        <li>96% sẵn sàng sử dụng tính năng mới.</li>
+                        <li>Impact cao: High-stakes (Sai KT = Sai dự án).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5 -->
+        <section class="slide">
+            <h2>Giải pháp & Logic Gate</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="card" style="margin-bottom: 20px;">
+                        <h3>Khảo sát Google Form</h3>
+                        <ul>
+                            <li>Khảo sát trên <span>23 học viên</span>.</li>
+                            <li><span>100%</span> xác nhận Pain-point này.</li>
+                            <li><span>96%</span> sẵn sàng sử dụng tính năng.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>Conditional Automation</h3>
+                        <p>Tránh False Positive gây phiền hà. AI chỉ trigger câu hỏi kiểm tra khi <span>Confidence =
+                                High</span> và có <span>Evidence</span> rõ ràng.</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Nguyên tắc thiết kế (HAX/PAIR)</h3>
+                    <ul>
+                        <li><span>G2 (Độ tin cậy):</span> Dùng ngôn ngữ mềm mỏng "Mình thấy có thể có nhầm lẫn...".</li>
+                        <li><span>G10 (Thu hẹp):</span> Hỏi lại nếu câu hỏi quá ngắn/mơ hồ.</li>
+                        <li><span>G9 (Sửa dễ dàng):</span> Nút [Bỏ qua] để dismiss alert ngay lập tức.</li>
+
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6 -->
+        <section class="slide">
+            <h2>Đánh giá chất lượng (Golden Set)</h2>
+            <div class="card" style="margin-bottom: 30px;">
+                <h3>Kiểm thử qua 22 Kịch bản (Golden Set)</h3>
+                <p>Tỷ lệ Pass vượt trội, hệ thống bắt lỗi chuẩn xác và từ chối khéo léo các yêu cầu ngoài lề.</p>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Các loại Test Cases</h3>
+                    <ul>
+                        <li><span>Hard (Nhầm lẫn):</span> Bắt đúng misconception, sinh Check-Question.</li>
+                        <li><span>Normal (Hỏi bình thường):</span> Giải thích trơn tru, không hỏi vặn.</li>
+                        <li><span>Rare (Spam/Ngoài lề):</span> Từ chối lịch sự, không sinh check-question vô duyên.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Slide 6 (Thank You) -->
+        <section class="slide">
+            <div style="text-align: center; margin-top: 10vh;">
+                <h1 style="font-size: 5rem; margin-bottom: 20px;">Thank You!</h1>
+                <p style="font-size: 2rem; color: var(--accent);">Cảm ơn BGK và BTC đã lắng nghe</p>
+                <div style="margin-top: 50px;">
+                    <p>Dự án: <strong>Comprehension Gap Detector</strong></p>
+                    <p>Nhóm: <strong>Gemini4 - Zone 3</strong></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="controls">
+            <button class="btn" id="prevBtn">❮ Trước</button>
+            <button class="btn" id="nextBtn">Tiếp ❯</button>
+        </div>
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index < currentSlide) {
+                    slide.classList.add('prev');
+                }
+            });
+            progressBar.style.width = ((currentSlide + 1) / slides.length) * 100 + '%';
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); }
+        });
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            if (currentSlide > 0) { currentSlide--; updateSlides(); }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); }
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 0) { currentSlide--; updateSlides(); }
+            }
+        });
+        updateSlides();
+    </script>
+</body>
+
+</html>
