@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comprehension Gap Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Comprehension Gap Detector</h1>
+        <p>Bôi đen đoạn slide &rarr; AI giải thích & phát hiện hiểu nhầm</p>
+      </div>
+      <div class="provider-selector">
+        <span class="status-dot"></span>
+        <select id="providerSelect">
+          <option value="gemini">Gemini</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="openrouter">OpenRouter</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="workspace" aria-label="Comprehension Gap Detector workspace">
+
+      <!-- LEFT: Slide viewer -->
+      <article class="panel slide-panel">
+        <header class="panel-header">
+          <h2>Nội dung bài giảng</h2>
+          <span class="mini-meta">AI in Action &mdash; Day 1 &amp; Day 2</span>
+        </header>
+        <div class="slide-hint">
+          <span>Bôi đen bất kỳ đoạn nào &rarr; AI đọc làm ngữ cảnh</span>
+          <span class="selection-pill" id="selectionPill"><span id="selectionPreview"></span></span>
+        </div>
+        <iframe
+          id="slideHtmlFrame"
+          class="html-slide-frame"
+          src="/slides/ai_in_action_slides.html"
+          title="AI in Action slide viewer"
+        ></iframe>
+      </article>
+
+      <!-- RIGHT: Chat panel -->
+      <article class="panel chat-panel">
+        <header class="panel-header">
+          <h2>AI Tutor</h2>
+          <span class="mini-meta">Gap-aware chat</span>
+        </header>
+
+        <div class="chat-stream" id="chatStream" aria-live="polite">
+          <div class="message tutor">
+            <div class="bubble" style="border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.08);">
+              Chào! Hãy <strong>bôi đen</strong> đoạn nội dung bạn muốn hỏi bên trái, rồi gõ câu hỏi bên dưới.
+            </div>
+          </div>
+        </div>
+
+        <form class="composer" id="composer">
+          <!-- Selection display: shown when user highlights text -->
+          <div class="selection-display" id="selectionDisplay">
+            <div class="selection-display-label">
+              <span>Đoạn đang bôi đen (ngữ cảnh AI)</span>
+              <button class="selection-clear-btn" id="selectionClearBtn" type="button">Xóa</button>
+            </div>
+            <div class="selection-display-text" id="selectionDisplayText"></div>
+          </div>
+          <div class="composer-row">
+            <textarea id="questionInput" placeholder="Bôi đen đoạn slide bên trái rồi gõ câu hỏi..." rows="2"></textarea>
+            <button class="send" id="sendButton" type="submit">Gửi ➤</button>
+          </div>
+        </form>
+      </article>
+    </section>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

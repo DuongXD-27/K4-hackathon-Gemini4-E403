@@ -1,0 +1,26 @@
+class PromptManager:
+    """
+    Quản lý các system prompts và template cho ReAct agent, Chatbot.
+    """
+    
+    @staticmethod
+    def get_react_agent_prompt(tools_description: str) -> str:
+        """
+        Template mẫu cho ReAct Agent. 
+        Sẽ được tích hợp trong tương lai khi có tool calling.
+        """
+        return f"""You are a reasoning and acting (ReAct) agent.
+You have access to the following tools:
+
+{tools_description}
+
+Use the following format:
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of the tools
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input question
+"""
