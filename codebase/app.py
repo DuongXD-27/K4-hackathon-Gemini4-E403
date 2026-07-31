@@ -1,10 +1,11 @@
 import os
 import sys
 import json
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, UploadFile, File
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import uvicorn
+import shutil
 
 # Đảm bảo import được các module cùng thư mục
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -19,7 +20,16 @@ if os.path.exists(data_path):
 @app.get("/")
 def read_root():
     """Trang chủ API."""
-    return {"message": "Comprehension Gap Detector API is running."}
+    from fastapi.responses import HTMLResponse
+    import os
+    index_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
+    with open(index_path, "r", encoding="utf-8") as f:
+        return HTMLResponse(content=f.read())
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    from fastapi.responses import Response
+    return Response(content=b"", media_type="image/x-icon", status_code=204)
 
 @app.get("/api/slides")
 def get_slides():
@@ -49,12 +59,19 @@ def get_slides():
     except Exception as e:
         return {"days": [], "error": str(e)}
 
-@app.get("/api/ocr")
-def get_ocr(slide: str):
-    """Mô phỏng lấy text OCR từ slide."""
-    from tools import MOCK_SLIDES_OCR
-    text = MOCK_SLIDES_OCR.get(slide, "Không có dữ liệu OCR cho slide này.")
-    return {"text": text, "source": "mock_backend"}
+
+
+@app.post("/api/upload_file")
+async def upload_file(file: UploadFile = File(...)):
+    """Lưu file người dùng upload và trả về đường dẫn."""
+    temp_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "temp")
+    os.makedirs(temp_dir, exist_ok=True)
+    file_path = os.path.join(temp_dir, file.filename)
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    return {"file_path": os.path.join("data", "temp", file.filename)}
+
+
 
 @app.post("/api/chat")
 async def chat(request: Request):

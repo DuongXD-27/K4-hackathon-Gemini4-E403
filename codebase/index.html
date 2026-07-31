@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comprehension Gap Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0d14;
+      --panel: #121826;
+      --panel-2: #172033;
+      --line: rgba(148, 163, 184, 0.2);
+      --text: #eef2ff;
+      --muted: #9aa8bd;
+      --soft: #cbd5e1;
+      --indigo: #6366f1;
+      --indigo-2: #818cf8;
+      --blue: #2563eb;
+      --student: #315cda;
+      --doc: #f8fafc;
+      --doc-text: #1e293b;
+      --amber-bg: rgba(245, 158, 11, 0.13);
+      --amber-line: #f59e0b;
+      --green-bg: rgba(34, 197, 94, 0.13);
+      --green-line: #22c55e;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(99, 102, 241, 0.24), transparent 30%),
+        linear-gradient(135deg, #0a0d14 0%, #111827 48%, #0c1220 100%);
+      color: var(--text);
+    }
+
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      width: min(1440px, 100%);
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 8px 2px 24px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 2.4vw, 2.35rem);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(99, 102, 241, 0.1);
+      white-space: nowrap;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.14);
+    }
+
+    .provider-selector {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 4px 0 14px;
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.1);
+      white-space: nowrap;
+      transition: border-color 180ms ease;
+    }
+
+    .provider-selector:hover {
+      border-color: rgba(129, 140, 248, 0.5);
+    }
+
+    .provider-selector select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 0;
+      background: transparent;
+      color: #dbeafe;
+      font-weight: 600;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 0 24px 0 4px;
+      outline: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 6px center;
+    }
+
+    .provider-selector select option {
+      background: #1e293b;
+      color: #e2e8f0;
+    }
+
+    .provider-selector select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .lesson-selector {
+      min-width: min(100%, 300px);
+      border: 1px solid rgba(129, 140, 248, 0.28);
+      border-radius: 8px;
+      color: #dbeafe;
+      background: rgba(15, 23, 42, 0.74);
+      font-size: 0.84rem;
+      font-weight: 600;
+      outline: none;
+      padding: 10px 36px 10px 12px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .lesson-selector:hover,
+    .lesson-selector:focus {
+      border-color: rgba(129, 140, 248, 0.62);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+    }
+
+    .lesson-selector option {
+      background: #1e293b;
+      color: #e2e8f0;
+    }
+
+    .slide-selectors {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.55fr) minmax(160px, 1fr);
+      gap: 8px;
+      width: min(100%, 500px);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .panel {
+      min-width: 0;
+      min-height: 680px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(23, 32, 51, 0.94), rgba(18, 24, 38, 0.96));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 72px;
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.45);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      letter-spacing: 0;
+    }
+
+    .mini-meta {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .slide-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 14px;
+      padding: 22px;
+      min-height: 0;
+    }
+
+    .slide-viewer {
+      flex: 0 0 auto;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #0b1220;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      aspect-ratio: 16 / 9;
+      max-height: 360px;
+      min-height: 260px;
+      user-select: text;
+      cursor: text;
+    }
+
+    .slide-topbar,
+    .slide-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 0 0 auto;
+      color: #cbd5e1;
+      background: rgba(99, 102, 241, 0.16);
+      border-color: rgba(129, 140, 248, 0.18);
+    }
+
+    .slide-topbar {
+      min-height: 40px;
+      padding: 0 14px;
+      border-bottom: 1px solid rgba(129, 140, 248, 0.18);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .slide-file {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: #dbeafe;
+    }
+
+    .slide-day-badge {
+      border: 1px solid rgba(129, 140, 248, 0.4);
+      border-radius: 999px;
+      padding: 3px 9px;
+      color: #c7d2fe;
+      background: rgba(99, 102, 241, 0.18);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .slide-frame {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      background: linear-gradient(145deg, #1a2744, #0f1f3d);
+    }
+
+    .pdf-frame {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #0b1220;
+    }
+
+    .slide-page-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      color: #94a3b8;
+    }
+
+    .slide-footer {
+      min-height: 36px;
+      padding: 0 10px;
+      border-top: 1px solid rgba(129, 140, 248, 0.18);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .slide-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slide-nav-button,
+    .highlight-button {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      color: #dbeafe;
+      background: rgba(15, 23, 42, 0.5);
+      cursor: pointer;
+      font-weight: 800;
+      transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    }
+
+    .slide-nav-button {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+    }
+
+    .highlight-button {
+      min-height: 28px;
+      padding: 0 12px;
+      font-size: 0.75rem;
+    }
+
+    .slide-nav-button:hover,
+    .highlight-button:hover {
+      border-color: rgba(129, 140, 248, 0.58);
+      background: rgba(99, 102, 241, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-stream {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 16px;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 22px;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      display: flex;
+      width: 100%;
+    }
+
+    .message.student {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: min(86%, 720px);
+      border-radius: 8px;
+      padding: 15px 16px;
+      line-height: 1.58;
+      font-size: 0.95rem;
+    }
+
+    .student .bubble {
+      color: #f8fafc;
+      background: linear-gradient(135deg, var(--student), var(--indigo));
+      box-shadow: 0 12px 26px rgba(49, 92, 218, 0.25);
+    }
+
+    .tutor .bubble {
+      width: min(92%, 760px);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      color: #e5e7eb;
+      background: rgba(30, 41, 59, 0.92);
+    }
+
+    .section {
+      padding: 2px 0;
+    }
+
+    .section h3 {
+      margin: 0 0 9px;
+      font-size: 0.96rem;
+      letter-spacing: 0;
+    }
+
+    .section p {
+      margin: 0;
+    }
+
+    .section-divider {
+      height: 1px;
+      margin: 16px 0;
+      background: rgba(148, 163, 184, 0.22);
+    }
+
+    .misconception,
+    .check {
+      border-left: 4px solid;
+      border-radius: 7px;
+      padding: 13px 14px;
+    }
+
+    .misconception {
+      border-color: var(--amber-line);
+      background: var(--amber-bg);
+    }
+
+    .check {
+      border-color: var(--green-line);
+      background: var(--green-bg);
+    }
+
+    .misconception-wrap {
+      max-height: 260px;
+      opacity: 1;
+      overflow: hidden;
+      transition: max-height 360ms ease, opacity 260ms ease, margin 360ms ease;
+    }
+
+    .misconception-wrap.hidden {
+      max-height: 0;
+      opacity: 0;
+      margin: 0;
+    }
+
+    .feedback-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .feedback,
+    .skip {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      min-height: 32px;
+      padding: 0 11px;
+      color: #b8c4d6;
+      background: rgba(15, 23, 42, 0.5);
+      cursor: pointer;
+      transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+      font-size: 0.83rem;
+      font-weight: 600;
+    }
+
+    .feedback:hover,
+    .skip:hover {
+      color: #fff;
+      border-color: rgba(129, 140, 248, 0.5);
+      background: rgba(99, 102, 241, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .feedback.selected {
+      color: #fff;
+      border-color: rgba(129, 140, 248, 0.72);
+      background: rgba(99, 102, 241, 0.42);
+    }
+
+    .composer {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      background: rgba(15, 23, 42, 0.58);
+    }
+
+    .composer textarea {
+      width: 100%;
+      min-height: 54px;
+      max-height: 128px;
+      resize: vertical;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 8px;
+      outline: none;
+      padding: 14px 15px;
+      color: var(--text);
+      background: rgba(15, 23, 42, 0.84);
+      line-height: 1.45;
+    }
+
+    .composer textarea:focus {
+      border-color: rgba(129, 140, 248, 0.72);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14);
+    }
+
+    .send {
+      align-self: stretch;
+      min-width: 98px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 18px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--indigo), var(--blue));
+      cursor: pointer;
+      font-weight: 800;
+      box-shadow: 0 14px 28px rgba(99, 102, 241, 0.27);
+      transition: transform 180ms ease, filter 180ms ease;
+    }
+
+    .send:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .send:disabled {
+      cursor: wait;
+      opacity: 0.72;
+      transform: none;
+      filter: none;
+    }
+
+    .loading .bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #dbeafe;
+      background: rgba(30, 41, 59, 0.74);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(219, 234, 254, 0.32);
+      border-top-color: #dbeafe;
+      border-radius: 999px;
+      animation: spin 800ms linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        padding: 18px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .lesson-selector {
+        width: 100%;
+      }
+
+      .slide-selectors {
+        grid-template-columns: 1fr;
+        width: 100%;
+      }
+
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        min-height: auto;
+      }
+
+      .slide-viewer {
+        max-height: none;
+      }
+
+      .bubble,
+      .tutor .bubble {
+        max-width: 100%;
+        width: auto;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        padding: 14px;
+      }
+
+      .panel-header,
+      .slide-body,
+      .chat-stream {
+        padding: 16px;
+      }
+
+      .slide-viewer {
+        min-height: 230px;
+      }
+
+      .composer {
+        grid-template-columns: 1fr;
+      }
+
+      .send {
+        min-height: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Comprehension Gap Detector</h1>
+        <p>AI tutor interface for online learning</p>
+      </div>
+      <div class="provider-selector">
+        <span class="status-dot"></span>
+        <select id="providerSelect">
+          <option value="gemini">🔵 Gemini</option>
+          <option value="openai">🟢 OpenAI</option>
+          <option value="anthropic">🟠 Anthropic</option>
+          <option value="openrouter">🟣 OpenRouter</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="workspace" aria-label="Comprehension Gap Detector workspace">
+      <article class="panel slide-panel">
+        <header class="panel-header">
+          <h2>📄 Nội dung bài giảng</h2>
+          <div class="slide-selectors">
+            <span class="status-pill" style="border-color: var(--amber-line); color: var(--amber-line); background: var(--amber-bg);">Fixed Slide</span>
+          </div>
+        </header>
+        <div class="slide-body">
+          <div class="slide-viewer" aria-label="Slide viewer" tabindex="0">
+            <div class="slide-topbar">
+              <span class="slide-file" id="slideFileName">day01-llm-foundation.pdf</span>
+              <span class="slide-day-badge" id="slideDayBadge">Day 1 · 0 trang</span>
+            </div>
+            <div class="slide-frame" id="slideFrame">
+              <iframe class="pdf-frame" id="pdfFrame" title="PDF slide viewer"></iframe>
+              <div class="slide-page-badge" id="slidePageBadge">Trang 14</div>
+            </div>
+            <div class="slide-footer">
+              <div class="slide-nav" aria-label="Điều hướng slide">
+                <button class="slide-nav-button" id="prevSlide" type="button" aria-label="Trang trước">←</button>
+                <span id="slideCounter">Trang 1 / 3</span>
+                <button class="slide-nav-button" id="nextSlide" type="button" aria-label="Trang sau">→</button>
+              </div>
+              <button class="highlight-button" id="highlightSlide" type="button">Highlight</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel chat-panel">
+        <header class="panel-header">
+          <h2>AI Tutor</h2>
+          <span class="mini-meta">Gap-aware chat</span>
+        </header>
+
+        <div class="chat-stream" id="chatStream" aria-live="polite">
+          <div class="message student">
+            <div class="bubble">Few-shot prompting có giống với fine-tuning không vì cả hai đều dùng ví dụ?</div>
+          </div>
+
+          <div class="message tutor">
+            <div class="bubble tutor-response">
+              <div class="section answer">
+                <h3>Trả lời:</h3>
+                <p>Không, hai kỹ thuật này khác nhau hoàn toàn. Few-shot prompting cung cấp ví dụ <em>trong prompt</em> lúc inference — model không học gì thêm, trọng số không thay đổi [trang 14]. Fine-tuning thì cập nhật trọng số model bằng cách huấn luyện lại trên tập dữ liệu mới — đây là quá trình tốn kém và xảy ra trước khi deploy.</p>
+              </div>
+
+              <div class="section-divider"></div>
+
+              <div class="misconception-wrap">
+                <div class="section misconception">
+                  <h3>Mình nhận ra bạn có thể đang nhầm:</h3>
+                  <p>Few-shot và fine-tuning đều <em>dùng ví dụ</em>, nhưng ví dụ trong few-shot chỉ là ngữ cảnh tạm thời trong prompt, không "dạy" gì cho model. Fine-tuning mới thực sự thay đổi model.</p>
+                </div>
+                <div class="section-divider"></div>
+              </div>
+
+              <div class="section check">
+                <h3>Câu kiểm tra nhanh:</h3>
+                <p>"Nếu bạn muốn model luôn trả lời theo phong cách nhất định <em>mà không cần nhắc lại mỗi lần</em>, bạn nên dùng kỹ thuật nào: Few-shot hay Fine-tuning? Vì sao?"</p>
+              </div>
+
+              <div class="feedback-row">
+                <button class="feedback" type="button">👍 Hữu ích</button>
+                <button class="feedback" type="button">👎 Quá khó</button>
+                <button class="feedback" type="button">👎 Không liên quan</button>
+                <button class="skip" type="button">Bỏ qua →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form class="composer" id="composer">
+          <textarea id="questionInput" placeholder="Bôi đen đoạn slide bên trái rồi gõ câu hỏi của bạn..." rows="2"></textarea>
+          <button class="send" id="sendButton" type="submit">Gửi ➤</button>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (async function main() {
+      /* ───────── 1. Fetch & parse .env ───────── */
+      // Đã chuyển xử lý API Key xuống Backend, không cần fetch .env lên Frontend nữa
+      let ENV = {};
+
+      /* ───────── 2. DOM refs ───────── */
+      const chatStream = document.querySelector("#chatStream");
+      const composer = document.querySelector("#composer");
+      const questionInput = document.querySelector("#questionInput");
+      const sendButton = document.querySelector("#sendButton");
+      const providerSelect = document.querySelector("#providerSelect");
+      const slideViewer = document.querySelector(".slide-viewer");
+      const slideFileName = document.querySelector("#slideFileName");
+      const slideDayBadge = document.querySelector("#slideDayBadge");
+      const pdfFrame = document.querySelector("#pdfFrame");
+      const slidePageBadge = document.querySelector("#slidePageBadge");
+      const slideCounter = document.querySelector("#slideCounter");
+      const prevSlide = document.querySelector("#prevSlide");
+      const nextSlide = document.querySelector("#nextSlide");
+      const highlightSlide = document.querySelector("#highlightSlide");
+
+      /* ───────── 3. Slide context & System prompt ───────── */
+      let SLIDES = [];
+      let SLIDE_DAYS = [];
+      let SLIDE_CONTEXT = "";
+      let SYSTEM_PROMPT = "";
+      let currentSlideIndex = 0;
+
+      function buildSystemPrompt(slideContext) {
+        return `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide và vừa bôi đen một đoạn rồi hỏi bạn.
+Tài liệu slide học viên đang xem:
+${slideContext}
+Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc JSON sau, không thêm gì khác ngoài JSON:
+{
+  "answer": "Câu trả lời giải thích khái niệm, kèm citation trang tương ứng nếu có căn cứ trong tài liệu. Nếu không có căn cứ, ghi rõ 'thông tin này ngoài tài liệu hiện tại'.",
+  "has_misconception": true hoặc false,
+  "misconception": "Chỉ điền nếu has_misconception=true: mô tả ngắn gọn học viên đang nhầm điểm gì và đúng phải là gì, kèm citation nếu có. Nếu false, để chuỗi rỗng.",
+  "check_question": "1 câu hỏi ngắn kiểm tra xem học viên đã hiểu đúng chưa. Phải liên quan trực tiếp đến câu hỏi vừa được hỏi."
+}
+Quy tắc:
+- has_misconception = true CHỈ KHI câu hỏi ẩn chứa nhầm lẫn rõ ràng. Đừng flag false positive.
+- Nếu câu hỏi quá ngắn/mơ hồ (dưới 10 chữ): answer = "Bạn đang thắc mắc về phần nào cụ thể? Hãy mô tả thêm để mình hỗ trợ chính xác hơn.", has_misconception = false, check_question = "".
+- Luôn dùng tiếng Việt, giọng thân thiện như mentor, không học thuật cứng nhắc.`;
+      }
+
+      function getPdfUrl(lesson) {
+        return `../data/vlearn-pack/slides/${lesson.pdf}#page=${lesson.page}&toolbar=0&navpanes=0&view=FitH`;
+      }
+
+      function getPromptContext(lesson) {
+        return `[${lesson.day_title || lesson.dayTitle} — Trang ${lesson.page}]
+PDF: ${lesson.pdf}`;
+      }
+      const fixedFilePath = "data/vlearn-pack/slides/d1-slide-hackathon.pdf";
+      const fixedFileUrl = "/data/vlearn-pack/slides/d1-slide-hackathon.pdf";
+      
+      async function loadFixedSlide() {
+        slideFileName.textContent = "d1-slide-hackathon.pdf";
+        slideDayBadge.textContent = "Fixed Slide";
+        slideCounter.textContent = "Full";
+        slidePageBadge.textContent = "Hackathon";
+        pdfFrame.src = fixedFileUrl + "#view=FitH";
+        
+        SLIDES = [{ id: fixedFilePath, file: "d1-slide-hackathon.pdf", page: 1, page_count: 29 }];
+        currentSlideIndex = 0;
+      }
+      highlightSlide.addEventListener("click", () => questionInput.focus());
+
+      function captureSelection() {
+        const selected = window.getSelection().toString().trim();
+        if (selected.length > 10) {
+          const preview = selected.length > 40 ? `${selected.substring(0, 40)}...` : selected;
+          questionInput.placeholder = `Bôi đen: "${preview}" — gõ câu hỏi của bạn`;
+          questionInput.dataset.selection = selected;
+          if (!questionInput.value.trim()) {
+            questionInput.value = `Về đoạn: "${preview}"\n`;
+          }
+          questionInput.focus();
+        }
+      }
+
+      slideViewer.addEventListener("mouseup", captureSelection);
+
+      /* ───────── 4. Multi-provider adapters ───────── */
+      const PROVIDERS = {
+        gemini: {
+          name: "Gemini",
+          getKey: () => ENV.GEMINI_API_KEY,
+          buildRequest(userText) {
+            const model = ENV.GEMINI_MODEL || "gemini-2.0-flash";
+            return {
+              url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.getKey()}`,
+              options: {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\nCâu hỏi học viên: " + userText }] }]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
+            return data.candidates[0].content.parts[0].text;
+          }
+        },
+
+        openai: {
+          name: "OpenAI",
+          getKey: () => ENV.OPENAI_API_KEY,
+          buildRequest(userText) {
+            return {
+              url: "https://api.openai.com/v1/chat/completions",
+              options: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${this.getKey()}`
+                },
+                body: JSON.stringify({
+                  model: ENV.OPENAI_MODEL || "gpt-4o-mini",
+                  messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    { role: "user", content: userText }
+                  ]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ OpenAI API");
+            return data.choices[0].message.content;
+          }
+        },
+
+        anthropic: {
+          name: "Anthropic",
+          getKey: () => ENV.ANTHROPIC_API_KEY,
+          buildRequest(userText) {
+            return {
+              url: "https://api.anthropic.com/v1/messages",
+              options: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "x-api-key": this.getKey(),
+                  "anthropic-version": "2023-06-01",
+                  "anthropic-dangerous-direct-browser-access": "true"
+                },
+                body: JSON.stringify({
+                  model: ENV.ANTHROPIC_MODEL || "claude-sonnet-4-20250514",
+                  max_tokens: 1024,
+                  system: SYSTEM_PROMPT,
+                  messages: [
+                    { role: "user", content: userText }
+                  ]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ Anthropic API");
+            if (data.type === "error") throw new Error(data.error?.message || "Lỗi từ Anthropic API");
+            return data.content[0].text;
+          }
+        },
+
+        openrouter: {
+          name: "OpenRouter",
+          getKey: () => ENV.OPENROUTER_API_KEY,
+          buildRequest(userText) {
+            return {
+              url: "https://openrouter.ai/api/v1/chat/completions",
+              options: {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${this.getKey()}`
+                },
+                body: JSON.stringify({
+                  model: ENV.OPENROUTER_MODEL || "google/gemma-4-31b-it:free",
+                  messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    { role: "user", content: userText }
+                  ]
+                })
+              }
+            };
+          },
+          parseResponse(data) {
+            if (data.error) throw new Error(data.error.message || "Lỗi từ OpenRouter API");
+            return data.choices[0].message.content;
+          }
+        }
+      };
+
+      /* ───────── 5. Provider selector init ───────── */
+      function getActiveProvider() {
+        return providerSelect.value;
+      }
+
+      function initProviderSelector() {
+        if (ENV.ACTIVE_PROVIDER && PROVIDERS[ENV.ACTIVE_PROVIDER]) {
+          providerSelect.value = ENV.ACTIVE_PROVIDER;
+        }
+        Array.from(providerSelect.options).forEach(opt => {
+          const p = PROVIDERS[opt.value];
+          if (p && !p.getKey()) {
+            opt.textContent += " (chưa có key)";
+            opt.style.color = "#94a3b8";
+          }
+        });
+      }
+
+      /* ───────── 6. Utility functions ───────── */
+      function scrollToLatest() {
+        chatStream.scrollTop = chatStream.scrollHeight;
+      }
+
+      function wireTutorActions(root = document) {
+        root.querySelectorAll(".feedback").forEach((button) => {
+          button.addEventListener("click", () => {
+            const row = button.closest(".feedback-row");
+            row.querySelectorAll(".feedback").forEach((item) => item.classList.remove("selected"));
+            button.classList.add("selected");
+          });
+        });
+
+        root.querySelectorAll(".skip").forEach((button) => {
+          button.addEventListener("click", () => {
+            const bubble = button.closest(".tutor-response");
+            const target = bubble.querySelector(".misconception-wrap");
+            if (target) {
+              target.classList.add("hidden");
+              button.textContent = "Đã bỏ qua";
+              button.disabled = true;
+            }
+          });
+        });
+      }
+
+      function addStudentMessage(text) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message student";
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = text;
+        wrapper.appendChild(bubble);
+        chatStream.appendChild(wrapper);
+      }
+
+      function addLoadingMessage(providerName) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "message tutor loading";
+        wrapper.innerHTML = `<div class="bubble"><span class="spinner" aria-hidden="true"></span>🤔 Đang hỏi ${providerName}...</div>`;
+        chatStream.appendChild(wrapper);
+        return wrapper;
+      }
+
+      function renderTutorResponse(json) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = "message tutor";
+        msgDiv.innerHTML = `
+          <div class="bubble tutor-response">
+            <div class="section answer">
+              <h3>📖 Trả lời:</h3>
+              <p>${json.answer}</p>
+            </div>
+            <div class="section-divider"></div>
+            <div class="misconception-wrap${json.has_misconception ? "" : " hidden"}">
+              <div class="section misconception">
+                <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
+                <p>${json.misconception || ""}</p>
+              </div>
+              <div class="section-divider"></div>
+            </div>
+            <div class="section check">
+              <h3>✅ Câu kiểm tra nhanh:</h3>
+              <p>${json.check_question || "(Không cần kiểm tra thêm cho câu hỏi này.)"}</p>
+            </div>
+            <div class="feedback-row">
+              <button class="feedback" type="button">👍 Hữu ích</button>
+              <button class="feedback" type="button">👎 Quá khó</button>
+              <button class="feedback" type="button">👎 Không liên quan</button>
+              <button class="skip" type="button">Bỏ qua →</button>
+            </div>
+          </div>`;
+        chatStream.appendChild(msgDiv);
+        wireTutorActions(msgDiv);
+      }
+
+      function renderError(message) {
+        const errDiv = document.createElement("div");
+        errDiv.className = "message tutor";
+        errDiv.innerHTML = `<div class="bubble" style="border-color:rgba(239,68,68,0.4);color:#fca5a5">⚠️ ${message}</div>`;
+        chatStream.appendChild(errDiv);
+      }
+
+      /* ───────── 7. Submit handler ───────── */
+      composer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const text = questionInput.value.trim();
+        if (!text) return;
+
+        const providerId = getActiveProvider();
+        const provider = PROVIDERS[providerId];
+
+        if (!provider) {
+          renderError("Provider không hợp lệ.");
+          return;
+        }
+
+        addStudentMessage(text);
+        questionInput.value = "";
+        questionInput.disabled = true;
+        sendButton.disabled = true;
+        providerSelect.disabled = true;
+        const loading = addLoadingMessage(provider.name);
+        scrollToLatest();
+
+        try {
+          const slideId = SLIDES[currentSlideIndex]?.id || "slide_1";
+          const res = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  question: text,
+                  slide_id: slideId,
+                  provider: providerId
+              })
+          });
+          
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const json = await res.json();
+          
+          loading.remove();
+          renderTutorResponse(json);
+        } catch (err) {
+          loading.remove();
+          renderError(`Lỗi khi gọi backend Agent: ${err.message}`);
+        }
+
+        questionInput.disabled = false;
+        sendButton.disabled = false;
+        providerSelect.disabled = false;
+        questionInput.focus();
+        scrollToLatest();
+      });
+
+      /* ───────── 8. Init ───────── */
+      initProviderSelector();
+      wireTutorActions();
+      loadFixedSlide();
+    })();
+  </script>
+</body>
+</html>

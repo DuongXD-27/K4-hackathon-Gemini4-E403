@@ -36,7 +36,10 @@ class ReActAgent:
                 
                 if action in TOOLS:
                     print(f"Agent gọi công cụ: {action}({action_input})")
-                    observation = TOOLS[action](action_input)
+                    try:
+                        observation = TOOLS[action](action_input)
+                    except Exception as e:
+                        observation = f"Lỗi khi chạy công cụ {action}: {type(e).__name__} - {str(e)}"
                 else:
                     observation = f"Công cụ {action} không tồn tại."
                 
