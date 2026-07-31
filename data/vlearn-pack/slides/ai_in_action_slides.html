@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>AI IN ACTION - Day 1 Slides</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; color: #333; }
+        .slide {
+            background-color: #fff;
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            margin: 0 auto 16px auto;
+            padding: 32px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .slide-header { border-bottom: 2px solid #0056b3; padding-bottom: 8px; margin-bottom: 14px; flex-shrink: 0; }
+        .slide-title { color: #0056b3; font-size: 22px; font-weight: bold; margin: 0; }
+        .slide-subtitle { color: #6c757d; font-size: 14px; margin-top: 4px; }
+        .slide-content { font-size: 13px; line-height: 1.5; flex: 1; overflow: hidden; }
+        .highlight { background-color: #fff3cd; padding: 10px 12px; border-left: 4px solid #ffc107; margin: 12px 0; font-weight: bold; color: #856404; font-size: 13px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+        .card { background: #f8f9fa; border: 1px solid #dee2e6; padding: 12px 14px; border-radius: 6px; }
+        .card h3 { margin-top: 0; color: #495057; border-bottom: 1px solid #dee2e6; padding-bottom: 6px; font-size: 13px; margin-bottom: 8px; }
+        .card p, .card li { font-size: 12px; margin-bottom: 4px; }
+        .footer-note { font-size: 12px; color: #6c757d; margin-top: 16px; font-style: italic; }
+        ul { padding-left: 18px; margin: 6px 0; }
+        li { margin-bottom: 6px; font-size: 13px; }
+        .code-block { background: #2b2b2b; color: #a9b7c6; padding: 10px 12px; border-radius: 6px; font-family: monospace; margin: 10px 0; font-size: 12px; }
+        .timeline { border-left: 3px solid #0056b3; padding-left: 16px; margin-left: 8px; }
+        .timeline-item { margin-bottom: 10px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -23px; top: 4px; width: 8px; height: 8px; background: #fff; border: 3px solid #0056b3; border-radius: 50%; }
+        .year { font-weight: bold; color: #0056b3; }
+        .center { text-align: center; }
+        /* Slide number badge */
+        .slide::after {
+            content: attr(data-slide);
+            position: absolute;
+            bottom: 10px;
+            right: 16px;
+            font-size: 11px;
+            color: #adb5bd;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">AI IN ACTION - Day 1</h1>
+            <div class="slide-subtitle">AI & LLM Foundation</div>
+        </div>
+        <div class="slide-content">
+            <p style="font-size: 24px; text-align: center; margin-top: 40px;">Bạn đang dùng AI mỗi ngày - nhưng thực sự bên trong nó đang làm gì?</p>
+            <div class="footer-note center" style="margin-top: 80px; font-weight: bold;">HACKATHON AI IN ACTION 2026</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Agenda</h1>
+        </div>
+        <div class="slide-content">
+            <ul>
+                <li>Bức tranh AI & các tầng của AI</li>
+                <li>Lịch sử AI 70 năm</li>
+                <li>Bên trong LLM: cơ chế vận hành</li>
+                <li>Từ LLM đến AI Agent</li>
+                <li>Landscape: model hôm nay & cuộc đua hiện tại</li>
+                <li>Chọn model & chi phí token</li>
+                <li>Gọi API lần đầu</li>
+                <li>Tổng kết - những ý để mang về</li>
+            </ul>
+            <div class="footer-note center">Từ "nghe AI" đến "gọi AI" trong một ngày</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">AI, ML, Deep Learning, GenAI, LLM – nằm ở đâu trong cùng một hệ?</h1>
+            <div class="slide-subtitle">Từ rộng đến hẹp</div>
+        </div>
+        <div class="slide-content">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="card"><strong>ARTIFICIAL INTELLIGENCE:</strong> Chiếc ô lớn nhất: mọi hệ thống có yếu tố "thông minh" kể cả hệ luật tay, robot...</div>
+                <div class="card" style="margin-left: 20px;"><strong>MACHINE LEARNING:</strong> Học từ dữ liệu thay vì viết luật tay (lọc spam - gợi ý phim).</div>
+                <div class="card" style="margin-left: 40px;"><strong>DEEP LEARNING:</strong> Mạng nơ-ron nhiều tầng tự học đặc trưng (nhận diện ảnh - giọng nói).</div>
+                <div class="card" style="margin-left: 60px;"><strong>GENERATIVE AI:</strong> Sinh nội dung mới: văn bản, ảnh, code.</div>
+                <div class="card" style="margin-left: 80px;"><strong>LLM:</strong> Model nền chuyên ngôn ngữ, tim của làn sóng hiện nay (GPT, Claude, Kimi).</div>
+            </div>
+            <div class="highlight center">
+                LLM không phải toàn bộ AI – nhưng nó là tầng nền của gần hết trải nghiệm AI bạn dùng hôm nay
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Ba nhóm AI chính: phân loại - sinh nội dung - hành động</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-3">
+                <div class="card">
+                    <h3>Discriminative AI</h3>
+                    <p>Giỏi phân loại, dự đoán: lọc spam, phát hiện gian lận, nhận diện ảnh.</p>
+                    <p><em>Input → một nhãn, một con số</em></p>
+                </div>
+                <div class="card">
+                    <h3>Generative AI</h3>
+                    <p>Sinh ra thứ mới: văn bản, ảnh, code.<br>ChatGPT, Claude, Midjourney.</p>
+                    <p><em>Prompt → nội dung mới</em></p>
+                </div>
+                <div class="card">
+                    <h3>Agentic AI</h3>
+                    <p>Nhận mục tiêu rồi tự làm nhiều bước: lập kế hoạch, dùng công cụ, hành động.</p>
+                    <p><em>Goal → Plan → Action</em></p>
+                </div>
+            </div>
+            <div class="highlight center">
+                LLM là engine chung của cả Generative lẫn Agentic — cuối buổi sáng mình sẽ thấy agent khác LLM ở đâu
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Lịch sử AI 70 năm</h1>
+        </div>
+        <div class="slide-content">
+            <div class="timeline">
+                <div class="timeline-item"><span class="year">1956</span> - Khai sinh, lời hứa đầu tiên (Dartmouth Workshop)</div>
+                <div class="timeline-item"><span class="year">1966-1973</span> - Các Cú Sốc (Perceptrons 1969, Báo cáo Lighthill 1973)</div>
+                <div class="timeline-item"><span class="year">1974-1980</span> - Mùa Đông Lần 1</div>
+                <div class="timeline-item"><span class="year">1980</span> - Hệ chuyên gia</div>
+                <div class="timeline-item"><span class="year">1987</span> - Sụp đổ Lisp machine</div>
+                <div class="timeline-item"><span class="year">1987-1993</span> - Mùa Đông Lần 2</div>
+                <div class="timeline-item"><span class="year">2006</span> - Deep Learning</div>
+                <div class="timeline-item"><span class="year">2012</span> - AlexNet</div>
+                <div class="timeline-item"><span class="year">2016</span> - AlphaGo</div>
+                <div class="timeline-item"><span class="year">2017</span> - Transformer</div>
+                <div class="timeline-item"><span class="year">2018</span> - GPT-1 / BERT</div>
+                <div class="timeline-item"><span class="year">2022</span> - ChatGPT</div>
+                <div class="timeline-item"><span class="year">2024</span> - Kỷ nguyên Agent</div>
+                <div class="timeline-item"><span class="year">2026</span> - Hiện tại</div>
+            </div>
+            <div class="highlight center">
+                2 lần mùa đông, cách tiếp cận chạm trần. Từ model đơn lẻ sang system có khả năng hành động như agent.
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">1980: Hệ chuyên gia (expert system)</h1>
+        </div>
+        <div class="slide-content">
+            <div class="highlight center" style="font-size: 20px;">
+                Đặt lại vấn đề: "Nếu AI chỉ giải thật tốt một loại bài toán chuyên môn hẹp thì sao?"
+            </div>
+            <p><strong>Sự ra đời của expert systems:</strong> AI đổi chiến lược: thôi theo đuổi trí tuệ tổng quát và tập trung giải thật tốt một miền hẹp bằng cách mã hóa tri thức chuyên gia thành luật.</p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">2009: Fei-Fei Li và ImageNet – cuộc cách mạng của dữ liệu</h1>
+        </div>
+        <div class="slide-content">
+            <p>Trong khi cả ngành chạy theo thuật toán thông minh hơn, Fei-Fei Li chọn con đường khác: <strong>xây bộ dữ liệu lớn hơn</strong> — 14 triệu ảnh được gán nhãn tay, hơn 20.000 loại vật.</p>
+            <div class="highlight center">
+                Ba năm sau, chính bộ dữ liệu đó là sân khấu cho cú nổ AlexNet 2012 → bài học định hình cả kỷ nguyên: <strong>đôi khi dữ liệu tốt hơn đánh bại thuật toán khôn hơn.</strong>
+            </div>
+            <div class="footer-note">Deng, J. et al. (2009), "ImageNet", Fei-Fei Li, TED 2015</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">2017: Transformer</h1>
+            <div class="slide-subtitle">Attention Is All You Need</div>
+        </div>
+        <div class="slide-content">
+            <p><strong>Tác giả:</strong> Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin</p>
+            <div class="highlight center">
+                Transformer là bước ngoặt vì nó cho mô hình hiểu ngôn ngữ theo cách linh hoạt hơn: mỗi từ có thể nhìn sang những từ quan trọng khác trong cả câu, thay vì chỉ đi tuần tự từng bước — trở thành nền móng kỹ thuật cho GPT, BERT và toàn bộ làn sóng LLM sau đó.
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">2022: ChatGPT</h1>
+        </div>
+        <div class="slide-content">
+            <div class="highlight center" style="font-size: 20px;">
+                ChatGPT xuất hiện như một trải nghiệm đại chúng
+            </div>
+            <p style="font-size: 18px; text-align: center; margin-top: 30px;">
+                Lần đầu tiên rất đông người dùng phổ thông có thể trực tiếp chạm vào một mô hình ngôn ngữ mạnh, thông qua một giao diện đơn giản đến mức ai cũng hiểu cách dùng.
+            </p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">LLM là gì? – một bộ não nền, không phải một chatbot</h1>
+        </div>
+        <div class="slide-content">
+            <p><strong>LLM (Large Language Model)</strong> là một mô hình ngôn ngữ rất lớn, thường dựa trên kiến trúc Transformer, được luyện trên hàng nghìn tỷ mảnh chữ để học cách đoán mảnh chữ tiếp theo trong ngữ cảnh.</p>
+            <p>Nhờ được luyện đủ rộng, nó trở thành một <strong>nền chung</strong>: thay vì mỗi việc train một model riêng, cùng một model làm được rất nhiều việc.</p>
+            <p>Chatbot chỉ là một dạng sản phẩm đóng gói quanh bộ não đó - lớp áo bên ngoài.</p>
+            
+            <div style="display: flex; align-items: center; justify-content: center; margin: 30px 0;">
+                <div class="card" style="background: #007bff; color: white; margin-right: 20px; font-weight: bold; padding: 30px;">
+                    1 model nền (LLM)
+                </div>
+                <div style="font-size: 24px;">→</div>
+                <div style="margin-left: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    <div class="card" style="padding: 10px;">Chatbot</div>
+                    <div class="card" style="padding: 10px;">Tóm tắt tài liệu</div>
+                    <div class="card" style="padding: 10px;">Viết code</div>
+                    <div class="card" style="padding: 10px;">Dịch & phân tích</div>
+                </div>
+            </div>
+
+            <div class="highlight center">
+                LLM = bộ não ngôn ngữ dùng chung cho mọi việc – sản phẩm bạn thấy chỉ là lớp áo bên ngoài
+            </div>
+            <div class="footer-note">
+                Model hiện nay chủ yếu là kiến trúc decoder-only (GPT, Claude, Gemini, Kimi), nhiều model dùng MoE; sau pre-training còn các bước căn chỉnh (SFT, RLHF/DPO) và luyện suy luận (reasoning training, từ ~2025).
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Bên trong Transformer: đầu ra luôn là một phân bố xác suất</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Xác suất Token</h3>
+                    <ul>
+                        <li>land: 22%</li>
+                        <li>forest: 9%</li>
+                        <li>country: 5%</li>
+                        <li>habitat: 4%</li>
+                        <li>forests: 4%</li>
+                        <li>soil: 4%</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="highlight center">
+                Với mọi ngữ cảnh, model chấm điểm MỌI từ trong từ vựng "land" 22%, "forest" 9%... → rồi chọn theo xác suất đó
+            </div>
+            <div class="footer-note">Transformers, the tech behind LLMs - 3Blue1Brown</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Sinh văn bản = đoán → nối vào câu → đoán tiếp</h1>
+        </div>
+        <div class="slide-content">
+            <div class="code-block">
+                If you could see the underlying probability distributions a large language model uses when generating text, then you [would 74%, could 13%...]
+            </div>
+            <div class="code-block">
+                ...then you would [have 86%, be 6%...]
+            </div>
+            <div class="code-block">
+                ...then you would essentially [gain 4%, likely 2%...]
+            </div>
+            <div class="highlight center">
+                Mỗi token mới được nối vào ngữ cảnh, rồi model chạy lại từ đầu — vòng lặp predict → append → rerun
+            </div>
+            <div class="footer-note">Transformers, the tech behind LLMs - 3Blue1Brown</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Token: model không đọc "từ", model đọc mảnh chữ</h1>
+        </div>
+        <div class="slide-content">
+            <p>Model không nhìn từ nguyên vẹn. Nó cắt văn bản thành các mảnh nhỏ gọi là <strong>token</strong>: có từ là một mảnh, có từ vỡ ba bốn mảnh, cả dấu câu và khoảng trắng cũng là mảnh.</p>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <h3>Tiếng Anh (9 từ → 11 token)</h3>
+                    <p>"To date, the cleverest thinker of all time was"</p>
+                </div>
+                <div class="card">
+                    <h3>Tiếng Việt (10 từ → 19 token)</h3>
+                    <p>"Lan bỏ quyển sách vào túi vì nó quá dày"</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 20px;">Độ dài câu XẤP XỈ nhau nhưng tokenizer GPT cắt Tiếng Việt vụn hơn hẳn: 1.9 token/từ so với 1.2 token/từ. <br><em>Ví dụ: "Hello world" ≈ 2 token, nhưng "Xin chào" có thể tới 3-4 token.</em></p>
+            <p>Tiếng Việt, code, JSON tốn token hơn tiếng Anh vì dấu thanh, ký tự đặc biệt và cấu trúc bị cắt nhỏ ra.</p>
+            
+            <div class="highlight center">
+                Mọi thứ model làm đều quy ra token và mỗi token đều có giá. Nhớ điều này khi sang phần chi phí.
+            </div>
+            <div class="footer-note">Thử trực tiếp: platform.openai.com/tokenizer. Số token chính xác phụ thuộc tokenizer của từng model.</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Context: bàn làm việc có hạn của model</h1>
+        </div>
+        <div class="slide-content">
+            <p>Mỗi lần trả lời, model chỉ nhìn được một lượng chữ có hạn — gọi là <strong>context window</strong>. Hãy hình dung một bàn làm việc: mọi thứ muốn model "thấy" phải bày lên bàn.</p>
+            <ul>
+                <li>Quy đổi: 128K token ≈ một cuốn sách 300 trang; 1M token ≈ 4-5 cuốn sách trên bàn cùng lúc.</li>
+                <li>Bàn đầy quá thì đồ ở giữa bàn dễ bị bỏ sót – đặt điều quan trọng ở giữa một prompt rất dài, model có thể "quên" mất.</li>
+            </ul>
+            
+            <div class="card center" style="margin-top: 20px;">
+                <h3>Đường cong trí nhớ</h3>
+                <p>Khả năng model nhớ thông tin:<br> Đầu ngữ cảnh (Cao) --- Giữa ngữ cảnh (Thấp, dễ bỏ sót) --- Cuối ngữ cảnh (Cao)</p>
+            </div>
+
+            <div class="highlight center">
+                Context càng dài càng tốn tiền và càng chậm – bàn rộng không có nghĩa là dùng tốt
+            </div>
+            <div class="footer-note">Hiện tượng "quên phần giữa": Liu et al. (2023), "Lost in the Middle". Model thế hệ mới đã cải thiện đáng kể nhưng chưa hết hẳn.</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Attention: mỗi từ được “nhìn sang” những từ quan trọng khác</h1>
+        </div>
+        <div class="slide-content">
+            <p>Thay vì đọc tuần tự từng chữ, cơ chế attention cho phép mỗi token:</p>
+            <ul>
+                <li>Chủ động “quay đầu” nhìn lại các token trước đó trong câu.</li>
+                <li>Chấm điểm mức độ liên quan của từng token đối với nghĩa của mình.</li>
+                <li>Khóa nghĩa theo ngữ cảnh: “nó” là quyển sách hay cái túi, tùy theo nó chú ý vào từ nào.</li>
+            </ul>
+            <div class="highlight center">
+                Đây chính là chữ T trong GPT — và là lý do model hiểu ngữ cảnh tốt hơn hẳn các thế hệ trước
+            </div>
+            <div class="footer-note">Video minh họa: Attention in transformers, step-by-step - 3Blue1Brown</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Hiểu attention để dùng AI hiệu quả: quản context = quản sự chú ý</h1>
+        </div>
+        <div class="slide-content">
+            <p>Attention có hạn và có "điểm mù". Vì vậy, cách bạn bày context quyết định model chú ý vào đâu:</p>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>1. Đặt điều quan trọng đầu – cuối</h3>
+                    <p>Đầu và cuối prompt được chú ý nhiều nhất; đồ ở giữa dễ bị bỏ sót — yêu cầu quan trọng đừng chôn giữa.</p>
+                </div>
+                <div class="card">
+                    <h3>2. Giữ bàn làm việc sạch</h3>
+                    <p>Context rác = attention rác. Khi chat dài, tóm tắt lại thay vì kéo theo mọi thứ; khi viết code, đưa đúng file liên quan, không dán cả repo.</p>
+                </div>
+                <div class="card">
+                    <h3>3. Cho tra sổ thay vì bắt nhớ</h3>
+                    <p>Tài liệu dài: lấy đoạn liên quan nhét vào context (RAG) thay vì trông chờ model nhớ hết hoặc nhét cả cuốn.</p>
+                </div>
+            </div>
+            <div class="highlight center">
+                Agent mạnh không phải vì context khổng lồ — mà vì nó có tools để lấy đúng thứ vào bàn làm việc đúng lúc
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Tham số (parameter): những "khớp nối" model học được</h1>
+        </div>
+        <div class="slide-content">
+            <p>Sau khi luyện xong, những gì model "biết" nằm trong các con số cố định bên trong gọi là tham số – hãy hình dung như khớp nối thần kinh: luyện càng kỹ, các khớp nối càng được siết đúng.</p>
+            <p><em>Tham số không phải thứ bạn chỉnh khi dùng model - nó được đóng gói sẵn trong "bộ não" (file weights). Bạn chỉ chỉnh được context và các núm vặn lúc gọi (như temperature).</em></p>
+            
+            <div class="grid-2">
+                <div class="card">
+                    <h3 style="color: #17a2b8;">2020 — GPT-3 (175 tỷ)</h3>
+                    <p>Một "bác sĩ đa năng" — mọi token đều đi qua toàn bộ khớp nối (dense).</p>
+                </div>
+                <div class="card">
+                    <h3 style="color: #17a2b8;">2026 — Kimi K3 (2.800 tỷ)</h3>
+                    <p>Một "bệnh viện đa khoa" (MoE) — mỗi token chỉ gọi vài chuyên gia.</p>
+                </div>
+            </div>
+
+            <div class="highlight center">
+                Nhiều tham số ≠ tốn hơn tuyến tính — nhờ MoE (Mixture of Experts), bệnh viện lớn gấp 16 lần mà chi phí mỗi ca khám gần như không đổi.
+            </div>
+            <div class="footer-note">Luật chơi 2020-2024: cứ thêm compute + dữ liệu là model khôn lên một cách dự đoán được (scaling law, Kaplan et al. 2020).</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">LLM được tạo ra như thế nào? – đọc nhiều, được chỉ, được uốn nắn, luyện đề</h1>
+        </div>
+        <div class="slide-content">
+            <p>Một LLM được "nuôi lớn” qua 3 bước - mỗi bước một việc khác nhau:</p>
+            <div class="grid-3">
+                <div class="card" style="border-top: 4px solid #0056b3;">
+                    <h3>1. PRE-TRAINING</h3>
+                    <p><strong>"Đọc nhiều"</strong></p>
+                    <p>Đọc gần như cả internet để học ngôn ngữ & kiến thức.</p>
+                    <p><em>Như đọc vạn cuốn sách nhưng chưa biết cách trả lời.</em></p>
+                </div>
+                <div class="card" style="border-top: 4px solid #17a2b8;">
+                    <h3>2. SFT</h3>
+                    <p><strong>"Được chỉ cách trả lời"</strong></p>
+                    <p>Người ra ví dụ hỏi-đáp mẫu, model bắt chước cách trả lời.</p>
+                    <p><em>Như gia sư làm mẫu “câu này nên đáp thế này".</em></p>
+                </div>
+                <div class="card" style="border-top: 4px solid #fd7e14;">
+                    <h3>3. RLHF / DPO</h3>
+                    <p><strong>"Được uốn nắn"</strong></p>
+                    <p>Người chấm câu nào tốt/tệ, model chỉnh cho hợp ý người.</p>
+                    <p><em>Như biên tập uốn giọng cho lịch sự, hữu ích, an toàn.</em></p>
+                </div>
+            </div>
+            <p style="margin-top: 20px;"><strong>(4) Luyện suy luận</strong> – "giải đề tự chấm" (từ ~2025): luyện toán/code có đáp án kiểm chứng được → model biết làm nháp trước khi trả lời.</p>
+            <div class="highlight center">
+                Đọc vạn cuốn sách chưa chắc biết trả lời phỏng vấn – đó là lý do cần bước 2, 3
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">RLHF: ba bước uốn cỗ máy đoán token thành trợ lý biết nghe lời</h1>
+        </div>
+        <div class="slide-content">
+            <ol style="font-size: 18px; line-height: 2;">
+                <li><strong>Model viết nhiều câu trả lời:</strong> Với cùng một câu hỏi, LLM sinh ra các câu Trả lời A, B, C, D.</li>
+                <li><strong>Người chấm xếp hạng:</strong> Reward Model (máy chấm điểm học từ người) xếp hạng các câu trả lời (VD: B > D > A > C).</li>
+                <li><strong>Huấn luyện theo điểm:</strong> Tăng xác suất câu ghi điểm cao. (Ví dụ điểm 9.2/10 cho LLM).</li>
+            </ol>
+            <div class="highlight center">
+                Lặp lại hàng nghìn lần → model dần "biết nghe lời". Cỗ máy đoán token + điểm xếp hạng của con người → trợ lý helpful, harmless, honest.
+            </div>
+            <div class="footer-note">Ouyang et al. (2022), InstructGPT. Rafailov et al. (2023), DPO.</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Giới hạn bẩm sinh: học giả trong bong bóng</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-3">
+                <div class="card">
+                    <h3>Bong bóng thời gian</h3>
+                    <p>Model bị "đóng băng" tại ngày ngừng đọc. Chuyện sau đó nó không biết — trừ khi bạn cung cấp thêm (knowledge cutoff).</p>
+                </div>
+                <div class="card">
+                    <h3>Nói chắc như đúng rồi</h3>
+                    <p>Model tối ưu cho câu nghe hợp lý, không phải tra sự thật — nên có thể tự tin mà sai (hallucination).</p>
+                </div>
+                <div class="card">
+                    <h3>Bàn làm việc có hạn</h3>
+                    <p>Context có trần; quá dài vừa tốn tiền vừa dễ bỏ sót thông tin ở giữa.</p>
+                </div>
+            </div>
+            <div class="highlight center">
+                Đây không phải lỗi tạm thời — đó là bản chất của cỗ máy đoán token. Vì vậy ta cần prompt tốt, context sạch, tra sổ (RAG), tools, và luôn kiểm chứng.
+            </div>
+            <div class="footer-note">"Biết nhiều" khác "làm được": dữ liệu mới và hành động thật cần tools/retrieval/workflow - nền của các ngày sau.</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Vì sao model vẫn sai: nó rất giỏi học vẹt đường tắt</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-3">
+                <div class="card">
+                    <h3>1. Phân loại spam</h3>
+                    <p><em>Model thực chất đã học:</em> "đếm số hyperlink trong email"</p>
+                    <p>→ Email sạch nhưng nhiều link vẫn bị gán spam.</p>
+                </div>
+                <div class="card">
+                    <h3>2. Câu chủ quan vs khách quan</h3>
+                    <p><em>Model thực chất đã học:</em> "có phải câu trích từ film review không"</p>
+                </div>
+                <div class="card">
+                    <h3>3. Suy luận ngôn ngữ (MNLI)</h3>
+                    <p><em>Model thực chất đã học:</em> "câu có động từ phủ định"</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px;">Đổi cấu trúc dữ liệu test là điểm tụt ngay. Ăn gian bằng nguồn gốc câu, không phải nội dung câu.</p>
+            <div class="highlight center">
+                Benchmark cao ≠ model hiểu đúng thứ bạn tưởng — luôn test trên dữ liệu của chính mình
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Chain-of-Thought: chỉ thêm "giấy nháp", từ sai thành đúng</h1>
+        </div>
+        <div class="slide-content">
+            <p style="font-size: 18px; font-weight: bold;">Bài toán: "Có 5 quả bóng tennis. Mua thêm 2 hộp, mỗi hộp 3 quả. Hỏi tổng cộng có bao nhiêu quả?"</p>
+            
+            <div class="grid-2">
+                <div class="card" style="border-left: 5px solid #dc3545;">
+                    <h3>Không có nháp — trả lời ngay</h3>
+                    <p>Model đọc câu hỏi → bật ra đáp án ngay:</p>
+                    <p><em>"Đáp án là 27 quả."</em> ❌ <strong>SAI</strong></p>
+                </div>
+                <div class="card" style="border-left: 5px solid #28a745;">
+                    <h3>Có giấy nháp — "hãy nghĩ từng bước"</h3>
+                    <p><em>"Bắt đầu có 5 quả.<br>Mỗi hộp 3 quả × 2 hộp = 6 quả.<br>5 + 6 = 11.<br>Đáp án là 11 quả."</em> ✅ <strong>ĐÚNG</strong></p>
+                </div>
+            </div>
+
+            <div class="highlight center">
+                Cùng một model, cùng một câu hỏi – cho nó được viết nháp từng bước, bản chất suy luận lộ ra
+            </div>
+            <div class="footer-note">Wei et al. (2022), "Chain-of-Thought Prompting". Đây là mầm của các reasoning model (o1, R1...) và test-time compute.</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Từ LLM đến agent: bốn mức độ – mỗi bậc thêm một năng lực</h1>
+            <div class="slide-subtitle">Mức tự chủ & tác động thật tăng dần →</div>
+        </div>
+        <div class="slide-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>LEVEL 0: Bộ não suy luận (AI)</h3>
+                    <p>LLM trần — không công cụ, không dữ liệu mới.</p>
+                </div>
+                <div class="card">
+                    <h3>LEVEL 1: Có kết nối</h3>
+                    <p>+ tools: search web, đọc database, gọi API – vượt khỏi bong bóng thời gian.</p>
+                </div>
+                <div class="card">
+                    <h3>LEVEL 2: Biết lập kế hoạch</h3>
+                    <p>+ tự chia mục tiêu thành nhiều bước, dùng nhiều tool nối tiếp, tự kiểm tra kết quả từng bước.</p>
+                </div>
+                <div class="card">
+                    <h3>LEVEL 3: Đội agent phối hợp</h3>
+                    <p>+ nhiều agent chuyên biệt chia việc như một đội ngũ (multi-agent).</p>
+                </div>
+            </div>
+            <div class="highlight center">
+                Agent không phải "một loại model khác" – đó là LLM được đặt vào vòng làm việc có mục tiêu và hành động
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Giải phẫu một agent: 5 bộ phận là một vòng lặp</h1>
+        </div>
+        <div class="slide-content">
+            <ul style="font-size: 18px; line-height: 2;">
+                <li><strong>1. Goal:</strong> Mục tiêu cần đạt.</li>
+                <li><strong>2. Reasoning:</strong> Bộ não LLM chia bước.</li>
+                <li><strong>3. Tools:</strong> Search, API, database, code.</li>
+                <li><strong>4. Action:</strong> Hành động ra đời thật.</li>
+                <li><strong>Memory:</strong> Sổ tay ghi nhớ các bước (Ghi / Đọc).</li>
+            </ul>
+            <p class="center" style="font-style: italic;">Vòng lặp agent: Quan sát kết quả → Lặp lại</p>
+            <div class="highlight center">
+                Agent = Goal + Reasoning + Tools + Memory + Action – chạy thành vòng lặp cho tới khi xong việc
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Cùng một mức năng lực, giá rơi khoảng 10 lần mỗi năm</h1>
+        </div>
+        <div class="slide-content">
+            <p>Giá cho cùng một năng lực giảm ~10x/năm — open-weight nằm ở tầng đáy.</p>
+            <ul>
+                <li>GPT-4 (2023): ~$30 / 1 triệu token</li>
+                <li>DeepSeek R1 (2025/2026): ~$0.55 / 1 triệu token</li>
+                <li>DeepSeek V4 (2026): ~$0.14 / 1 triệu token</li>
+            </ul>
+            <div class="highlight center">
+                Việc năm ngoái phải dùng model đắt nhất — năm nay model rẻ đã làm được
+            </div>
+            <div class="footer-note">>280x rẻ hơn trong ~2 năm (11/2022 → 10/2024, 20 → 0.07).</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Chọn model theo TẦNG, không chọn theo tên</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-3">
+                <div class="card">
+                    <h3>TẦNG 1 - FRONTIER ĐÓNG</h3>
+                    <p><em>GPT-5.6, Claude Opus 4.8</em></p>
+                    <p>Đắt nhất — chỉ trả cho việc thật sự khó: suy luận nhiều bước, code phức tạp, tài liệu dài độ tin cậy cao.</p>
+                </div>
+                <div class="card" style="border: 2px solid #28a745;">
+                    <h3>TẦNG 2 - RẺ MÀ MẠNH (Khuyên dùng)</h3>
+                    <p><em>Sonnet 4.6, Gemini 3.1 Pro, Kimi K3, Haiku, Flash</em></p>
+                    <p>Mặc định thử tầng này trước. Giải quyết đa số việc hằng ngày: viết, code, phân tích công việc, automation.</p>
+                </div>
+                <div class="card">
+                    <h3>TẦNG 3 - SELF-HOST / SIÊU RẺ</h3>
+                    <p><em>Kimi K3 open-weight, DeepSeek, Qwen</em></p>
+                    <p>Việc đơn giản, khối lượng lớn. Khi cần kiểm soát dữ liệu nhạy cảm hoặc chi phí ở quy mô lớn.</p>
+                </div>
+            </div>
+            <div class="highlight center">
+                Bắt đầu từ model đủ tốt và đủ rẻ – chỉ nâng tầng khi kết quả thực sự chặn use case.
+                <br><br>
+                <em>Hai lỗi đối xứng: Việc đơn giản mà gọi frontier → phí tiền | Việc khó mà cố dùng rẻ → kết quả tệ.</em>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Token có giá: vé vào rẻ, vé ra đắt gấp 3-5 lần</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>VÉ VÀO (INPUT) x1</h3>
+                    <p>Chữ BẠN gửi đi: prompt, system instruction, context lịch sử chat.</p>
+                    <p><em>Rẻ - model chỉ cần đọc.</em></p>
+                </div>
+                <div class="card">
+                    <h3>VÉ RA (OUTPUT) x3-5</h3>
+                    <p>Chữ MODEL viết ra. Nó phải tự sinh từng mảnh một, vừa chậm vừa tốn.</p>
+                    <p><em>Đắt - model phải “vắt óc”.</em></p>
+                </div>
+            </div>
+            <div class="code-block center" style="margin-top: 20px;">
+                HÓA ĐƠN 1 LẦN GỌI API (ví dụ):<br>
+                Input: 1,150 tok × $3/1M = $0.00345<br>
+                Output: 200 tok × $15/1M = $0.00300<br>
+                TỔNG: ≈ $0.0065
+            </div>
+            <div class="highlight center">
+                Input tokens + Output tokens = Chi phí mỗi lần gọi – kiểm soát output là núm vặn lớn nhất
+            </div>
+            <div class="footer-note">Đọc mục usage trong mỗi response giúp bạn kiểm soát chi phí từ ngày đầu - đó là hóa đơn chi tiết.</div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Giải phẫu một prompt: bốn lớp xếp chồng</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>LỚP 1: System instruction</h3>
+                    <p>"Lời dặn đầu ca": model là ai, cư xử thế nào, không được làm gì.</p>
+                    <p><em>«Bạn là trợ lý y khoa, trả lời ngắn gọn, không chẩn đoán...»</em></p>
+                </div>
+                <div class="card">
+                    <h3>LỚP 2: User input</h3>
+                    <p>Câu hỏi / yêu cầu của người dùng trong lượt này.</p>
+                    <p><em>«Tóm tắt báo cáo Q1 giúp mình»</em></p>
+                </div>
+                <div class="card">
+                    <h3>LỚP 3: Context bổ sung</h3>
+                    <p>Tài liệu, lịch sử chat, dữ liệu tra sổ – phần bày lên "bàn làm việc".</p>
+                    <p><em>«[đính kèm: bao_cao_q1.pdf, 3 đoạn liên quan]»</em></p>
+                </div>
+                <div class="card">
+                    <h3>LỚP 4: Output mong muốn</h3>
+                    <p>Dạng kết quả: gạch đầu dòng? bảng? JSON? dài bao nhiêu?</p>
+                    <p><em>«3 bullet + 1 rủi ro chính, tiếng Việt»</em></p>
+                </div>
+            </div>
+            <div class="highlight center">
+                Viết rõ cả 4 lớp = đã làm tốt một nửa "prompt engineering" - phần còn lại là các ngày sau
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="slide-header">
+            <h1 class="slide-title">Hai núm vặn chọn từ: temperature & top_p</h1>
+        </div>
+        <div class="slide-content">
+            <div class="grid-2">
+                <div class="card">
+                    <h3>temperature — “núm vặn độ liều”</h3>
+                    <p>Cùng một câu: “Một tách ___”</p>
+                    <ul>
+                        <li><strong>T = 0:</strong> Luôn chọn từ chắc nhất (cà phê) → ổn định, lặp lại, hợp code & phân tích.</li>
+                        <li><strong>T = 1:</strong> Cân bằng tự nhiên — vẫn ưu tiên từ hợp lý.</li>
+                        <li><strong>T = 2:</strong> Phân bố phẳng ra → đa dạng, "phiêu", dễ lạc đề.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>top_p — “chỉ xem top đầu bảng”</h3>
+                    <p>Giữ nhóm cộng dồn ≥ 90% (ví dụ p=0.9). Các từ có xác suất thấp bị loại khỏi lựa chọn.</p>
+                    <p>Model chỉ còn chọn trong nhóm đáng tin.</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px;"><em>Thường chỉ vặn một trong hai: temperature hoặc top_p. Hai núm này không làm model thông minh hơn — chỉ đổi cách chọn từ, không thêm tri thức.</em></p>
+            <div class="highlight center">
+                Mặc định an toàn: temperature = 0 cho việc cần ổn định – chỉ tăng khi thật sự cần đa dạng
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
