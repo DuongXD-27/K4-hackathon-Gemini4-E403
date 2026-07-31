@@ -467,23 +467,8 @@
   <script>
     (async function main() {
 
-      /* ── 1. Load .env ── */
-      let ENV = {};
-      try {
-        const res = await fetch("/.env");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const text = await res.text();
-        text.split("\n").forEach(line => {
-          line = line.trim();
-          if (!line || line.startsWith("#")) return;
-          const idx = line.indexOf("=");
-          if (idx === -1) return;
-          ENV[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
-        });
-        console.log(".env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
-      } catch (err) {
-        console.warn("Không đọc được .env:", err.message);
-      }
+      /* ── 1. Init (no longer fetching .env on client) ── */
+      console.log("Comprehension Gap Detector started.");
 
       /* ── 2. DOM refs ── */
       const chatStream       = document.getElementById("chatStream");
@@ -534,7 +519,12 @@ Ví dụ 1 (misconception_confidence = "high"):
 - Đánh giá: Nhầm lẫn giữa Fine-tuning và RAG (RAG mới là nạp tài liệu lúc hỏi), có bằng chứng rõ trong câu hỏi.
 → misconception_detected: true, misconception_confidence: "high"
 
-Ví dụ 2 (misconception_confidence = "low"):
+Ví dụ 2 (misconception_confidence = "high"):
+- HV: "Agent chỉ là LLM thôi đúng không?"
+- Đánh giá: Nhầm lẫn rõ ràng — Agent = LLM (Reasoning) + Tools + Memory + Action, không chỉ riêng LLM trần.
+→ misconception_detected: true, misconception_confidence: "high", check_question: "Theo bạn, ngoài bộ não LLM, agent cần thêm những thành phần nào để có thể tự hoàn thành một mục tiêu?"
+
+Ví dụ 3 (misconception_confidence = "low"):
 - HV: "Temperature cao thì output đa dạng hơn đúng không?"
 - Đánh giá: HV đang hiểu đúng, không có nhầm lẫn.
 → misconception_detected: false, misconception_confidence: "low", check_question: ""`;
@@ -593,131 +583,9 @@ Ví dụ 2 (misconception_confidence = "low"):
         }
       });
 
-      /* ── 5. Multi-provider adapters ── */
-      const PROVIDERS = {
-        gemini: {
-          name: "Gemini",
-          getKey: () => ENV.GEMINI_API_KEY,
-          buildRequest(userText) {
-            const model = ENV.GEMINI_MODEL || "gemini-2.0-flash";
-            return {
-              url: `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.getKey()}`,
-              options: {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  // Gemini API: systemInstruction riêng, contents chỉ chứa user message
-                  systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-                  contents: [{ role: "user", parts: [{ text: userText }] }]
-                })
-              }
-            };
-          },
-          parseResponse(data) {
-            if (data.error) throw new Error(data.error.message || "Lỗi Gemini: " + JSON.stringify(data.error));
-            return data.candidates[0].content.parts[0].text;
-          }
-        },
-
-        openai: {
-          name: "OpenAI",
-          getKey: () => ENV.OPENAI_API_KEY,
-          buildRequest(userText) {
-            return {
-              url: "https://api.openai.com/v1/chat/completions",
-              options: {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${this.getKey()}`
-                },
-                body: JSON.stringify({
-                  model: ENV.OPENAI_MODEL || "gpt-4o-mini",
-                  messages: [
-                    { role: "system", content: SYSTEM_PROMPT },
-                    { role: "user", content: userText }
-                  ]
-                })
-              }
-            };
-          },
-          parseResponse(data) {
-            if (data.error) throw new Error(data.error.message || "Lỗi từ OpenAI API");
-            return data.choices[0].message.content;
-          }
-        },
-
-        anthropic: {
-          name: "Anthropic",
-          getKey: () => ENV.ANTHROPIC_API_KEY,
-          buildRequest(userText) {
-            return {
-              url: "https://api.anthropic.com/v1/messages",
-              options: {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-api-key": this.getKey(),
-                  "anthropic-version": "2023-06-01",
-                  "anthropic-dangerous-direct-browser-access": "true"
-                },
-                body: JSON.stringify({
-                  model: ENV.ANTHROPIC_MODEL || "claude-sonnet-4-20250514",
-                  max_tokens: 1024,
-                  system: SYSTEM_PROMPT,
-                  messages: [{ role: "user", content: userText }]
-                })
-              }
-            };
-          },
-          parseResponse(data) {
-            if (data.error) throw new Error(data.error.message || "Lỗi từ Anthropic API");
-            if (data.type === "error") throw new Error(data.error?.message || "Lỗi từ Anthropic");
-            return data.content[0].text;
-          }
-        },
-
-        openrouter: {
-          name: "OpenRouter",
-          getKey: () => ENV.OPENROUTER_API_KEY,
-          buildRequest(userText) {
-            return {
-              url: "https://openrouter.ai/api/v1/chat/completions",
-              options: {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${this.getKey()}`
-                },
-                body: JSON.stringify({
-                  model: ENV.OPENROUTER_MODEL || "google/gemma-4-31b-it:free",
-                  messages: [
-                    { role: "system", content: SYSTEM_PROMPT },
-                    { role: "user", content: userText }
-                  ]
-                })
-              }
-            };
-          },
-          parseResponse(data) {
-            if (data.error) throw new Error(data.error.message || "Lỗi từ OpenRouter API");
-            return data.choices[0].message.content;
-          }
-        }
-      };
-
-      /* ── 6. Provider selector ── */
+      /* ── 5. Provider selector (dữ liệu nạp từ HTML tĩnh, key ở backend) ── */
       function initProviderSelector() {
-        if (ENV.ACTIVE_PROVIDER && PROVIDERS[ENV.ACTIVE_PROVIDER]) {
-          providerSelect.value = ENV.ACTIVE_PROVIDER;
-        }
-        Array.from(providerSelect.options).forEach(opt => {
-          const p = PROVIDERS[opt.value];
-          if (p && !p.getKey()) {
-            opt.textContent += " (chưa có key)";
-            opt.style.color = "#94a3b8";
-          }
-        });
+        // Chỉ để frontend hiển thị UI bình thường
       }
 
       /* ── 7. Chat utilities ── */
@@ -815,27 +683,34 @@ Ví dụ 2 (misconception_confidence = "low"):
         const text = questionInput.value.trim();
         if (!text) return;
 
-        const provider = PROVIDERS[providerSelect.value];
-        if (!provider) { renderError("Provider không hợp lệ."); return; }
-        if (!provider.getKey()) {
-          renderError(`Chưa có API key cho ${provider.name}. Thêm key vào file .env rồi reload.`);
-          return;
-        }
+        const providerValue = providerSelect.value;
+        const providerName = providerSelect.options[providerSelect.selectedIndex].text;
 
         addStudentMessage(text);
         questionInput.value = "";
         questionInput.disabled = true;
         sendButton.disabled = true;
         providerSelect.disabled = true;
-        const loading = addLoadingMessage(provider.name);
+        const loading = addLoadingMessage(providerName);
         scrollToLatest();
 
         try {
-          const { url, options } = provider.buildRequest(text);
-          console.log("[DEBUG] Gửi tới", provider.name, "| SYSTEM_PROMPT snippet:", SYSTEM_PROMPT.substring(0, 120));
-          const res = await fetch(url, options);
-          const data = await res.json();
-          const raw = provider.parseResponse(data);
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              provider: providerValue,
+              userText: text,
+              systemPrompt: SYSTEM_PROMPT
+            })
+          });
+          
+          if (!res.ok) {
+            const errBody = await res.text();
+            throw new Error(`HTTP ${res.status} - ${errBody}`);
+          }
+          
+          const raw = await res.text();
           console.log("[DEBUG] Raw response:", raw.substring(0, 300));
           // Parse JSON — thử nhiều cách khác nhau
           let json;
@@ -850,15 +725,27 @@ Ví dụ 2 (misconception_confidence = "low"):
               json = JSON.parse(match[0]);
             } else {
               // Fallback: render raw text nếu không parse được
-              json = { answer: raw, has_misconception: false, misconception: "", check_question: "" };
+              json = { answer: raw, misconception_detected: false, misconception_confidence: "low", misconception_evidence: "", check_question: "" };
             }
           }
           // --- Xác thực Misconception & Rate Limit ---
+          const detected = String(json.misconception_detected).toLowerCase() === "true" || json.misconception_detected === true;
+          const confidence = String(json.misconception_confidence || "").trim().toLowerCase();
+          
           if (!json.misconception_evidence || json.misconception_evidence.trim() === "") {
             json.misconception_confidence = "low"; // Hạ cấp nếu model lấp liếm không đưa ra bằng chứng
+          } else {
+            json.misconception_confidence = confidence;
           }
+          json.misconception_detected = detected;
 
           let shouldShowQuestion = (json.misconception_detected === true && json.misconception_confidence === "high");
+          
+          console.log("[DEBUG] Gate:", { 
+            detected: json.misconception_detected, 
+            confidence: json.misconception_confidence, 
+            shouldShowQuestion 
+          });
 
           if (shouldShowQuestion) {
             // Chặn hỏi 2 lượt liên tiếp hoặc khi user vừa mới bấm 'Bỏ qua'
@@ -883,7 +770,7 @@ Ví dụ 2 (misconception_confidence = "low"):
         } catch (err) {
           console.error("[ERROR]", err);
           loading.remove();
-          renderError(`Lỗi ${provider.name}: ${err.message}`);
+          renderError(`Lỗi ${providerName}: ${err.message}`);
         }
 
         questionInput.disabled = false;

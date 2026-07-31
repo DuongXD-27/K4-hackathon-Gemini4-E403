@@ -67,10 +67,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_file(CODEBASE / "index.html", "text/html; charset=utf-8")
             return
 
-        # .env for API keys
-        if path == "/.env":
-            self.send_file(ROOT / ".env", "text/plain; charset=utf-8")
-            return
+        # Route /.env removed for security
 
         # Serve HTML slide files (e.g. /slides/ai_in_action_slides.html)
         if path.startswith("/slides/") and path.endswith(".html"):
@@ -82,6 +79,109 @@ class Handler(BaseHTTPRequestHandler):
             self.send_file(html_path, "text/html; charset=utf-8")
             return
 
+        self.send_error(404)
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        path = unquote(parsed.path)
+
+        if path == "/api/chat":
+            content_length = int(self.headers.get("Content-Length", 0))
+            if content_length == 0:
+                self.send_error(400, "Empty body")
+                return
+            body = self.rfile.read(content_length)
+            data = json.loads(body.decode("utf-8"))
+            
+            provider = data.get("provider")
+            userText = data.get("userText")
+            systemPrompt = data.get("systemPrompt")
+            
+            import urllib.request
+            import urllib.error
+            
+            try:
+                if provider == "gemini":
+                    key = ENV.get("GEMINI_API_KEY")
+                    if not key: raise Exception("Missing GEMINI_API_KEY")
+                    model = ENV.get("GEMINI_MODEL", "gemini-2.0-flash")
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+                    payload = {
+                        "systemInstruction": { "parts": [{ "text": systemPrompt }] },
+                        "contents": [{ "role": "user", "parts": [{ "text": userText }] }]
+                    }
+                    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+                    
+                elif provider == "openai":
+                    key = ENV.get("OPENAI_API_KEY")
+                    if not key: raise Exception("Missing OPENAI_API_KEY")
+                    model = ENV.get("OPENAI_MODEL", "gpt-4o-mini")
+                    url = "https://api.openai.com/v1/chat/completions"
+                    payload = {
+                        "model": model,
+                        "messages": [
+                            { "role": "system", "content": systemPrompt },
+                            { "role": "user", "content": userText }
+                        ]
+                    }
+                    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"})
+                    
+                elif provider == "anthropic":
+                    key = ENV.get("ANTHROPIC_API_KEY")
+                    if not key: raise Exception("Missing ANTHROPIC_API_KEY")
+                    model = ENV.get("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+                    url = "https://api.anthropic.com/v1/messages"
+                    payload = {
+                        "model": model,
+                        "max_tokens": 1024,
+                        "system": systemPrompt,
+                        "messages": [{ "role": "user", "content": userText }]
+                    }
+                    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01"})
+                    
+                elif provider == "openrouter":
+                    key = ENV.get("OPENROUTER_API_KEY")
+                    if not key: raise Exception("Missing OPENROUTER_API_KEY")
+                    model = ENV.get("OPENROUTER_MODEL", "google/gemma-4-31b-it:free")
+                    url = "https://openrouter.ai/api/v1/chat/completions"
+                    payload = {
+                        "model": model,
+                        "messages": [
+                            { "role": "system", "content": systemPrompt },
+                            { "role": "user", "content": userText }
+                        ]
+                    }
+                    req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json", "Authorization": f"Bearer {key}"})
+                
+                else:
+                    self.send_error(400, "Unknown provider")
+                    return
+
+                with urllib.request.urlopen(req, timeout=30) as response:
+                    res_body = response.read()
+                    res_json = json.loads(res_body.decode("utf-8"))
+                    
+                    if provider == "gemini":
+                        raw_answer = res_json["candidates"][0]["content"]["parts"][0]["text"]
+                    elif provider in ("openai", "openrouter"):
+                        raw_answer = res_json["choices"][0]["message"]["content"]
+                    elif provider == "anthropic":
+                        raw_answer = res_json["content"][0]["text"]
+                    else:
+                        raw_answer = "{}"
+                    
+                    self.send_response(200)
+                    self.send_header("Content-Type", "text/plain; charset=utf-8")
+                    self.end_headers()
+                    self.wfile.write(raw_answer.encode("utf-8"))
+                    
+            except Exception as e:
+                self.send_response(500)
+                self.send_header("Content-Type", "text/plain; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(str(e).encode("utf-8"))
+            return
+            
         self.send_error(404)
 
 
