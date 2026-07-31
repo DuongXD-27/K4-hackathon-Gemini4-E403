@@ -28,7 +28,7 @@
   /* ── 4. Selection capture — nhận postMessage từ iframe slide ── */
   function applySelection(text) {
     const trimmed = (text || "").trim();
-    if (trimmed.length > 8) {
+    if (trimmed.length > 2) {
       updateContext(trimmed);
 
       const preview = trimmed.length > 45 ? trimmed.substring(0, 45) + "…" : trimmed;

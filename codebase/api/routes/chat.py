@@ -1,5 +1,6 @@
+import json
+import re
 from fastapi import APIRouter, HTTPException
-from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel
 
 from agents.react_agent import ReActAgent
@@ -16,7 +17,25 @@ class ChatRequest(BaseModel):
     selectedText: str = ""
     fullSlideText: str = ""
 
-@router.post("/chat", response_class=PlainTextResponse)
+from typing import Optional
+
+class TutorResponse(BaseModel):
+    answer: str
+    misconception_detected: bool = False
+    misconception_confidence: Optional[str] = "low"
+    misconception_evidence: Optional[str] = ""
+    check_question: Optional[str] = ""
+
+def clean_json_string(raw_text: str) -> str:
+    """Loại bỏ markdown code block (nếu có) để lấy JSON hợp lệ."""
+    text = raw_text.strip()
+    if text.startswith("```"):
+        match = re.search(r"```(?:json)?\s*(.*?)\s*```", text, re.DOTALL)
+        if match:
+            return match.group(1)
+    return text
+
+@router.post("/chat", response_model=TutorResponse)
 def chat_api(request: ChatRequest):
     try:
         from prompts.system_prompts import PromptManager
@@ -31,7 +50,18 @@ def chat_api(request: ChatRequest):
             base_system_prompt=system_prompt,
             provider=request.provider
         )
-        return raw_answer
+        
+        # Tiền xử lý raw_answer để đảm bảo nó là JSON hợp lệ
+        cleaned_json = clean_json_string(raw_answer)
+        
+        try:
+            parsed_data = json.loads(cleaned_json)
+            # Pydantic sẽ tự động validate dữ liệu khi parse vào TutorResponse
+            return TutorResponse(**parsed_data)
+        except json.JSONDecodeError:
+            print(f"Failed to parse JSON: {raw_answer}")
+            raise ValueError("LLM did not return a valid JSON format.")
+            
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
