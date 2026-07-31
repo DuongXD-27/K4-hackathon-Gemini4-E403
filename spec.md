@@ -187,3 +187,4 @@ Loại: [ ] Tối ưu tính năng có sẵn  [X] Tính năng mới
 | 30/07/2026 | Điền evidence khảo sát n=23, 100%, 96% | Kết quả Google Form thu được trước 23:59 N1 |
 | 30/07/2026 | Chèn ảnh survey.png vào §1 | Bằng chứng trực quan đường A |
 | 30/07/2026 | Điền phân công có tên + willing users + ai log CP5 | Hoàn thiện §8 trước deadline nộp bài |
+| 31/07/2026 | Đổi cơ chế trigger check_question từ random 30% sang gate cứng (detected + high confidence + evidence) | Tăng tính deterministic, giảm false positive, khớp với thiết kế G11 & G2 |
