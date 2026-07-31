@@ -1,4 +1,4 @@
-{
+﻿{
   "days": [
     {
       "id": "day1",
@@ -6,7 +6,7 @@
       "badge": "Day 1",
       "pdf": "d1-slide-hackathon.pdf",
       "page_count": 29,
-      "slide_title_prefix": "Day 1 — Slide"
+      "slide_title_prefix": "Day 1 -> Slide"
     },
     {
       "id": "day2",
@@ -14,7 +14,15 @@
       "badge": "Day 2",
       "pdf": "d2-slide-hackathon.pdf",
       "page_count": 29,
-      "slide_title_prefix": "Day 2 — Slide"
+      "slide_title_prefix": "Day 2 -> Slide"
+    },
+    {
+      "id": "html-day",
+      "title": "AI In Action (HTML)",
+      "badge": "HTML Slides",
+      "pdf": "ai_in_action_slides.html",
+      "page_count": 29,
+      "slide_title_prefix": "AI In Action -> Slide"
     }
   ]
 }

@@ -44,7 +44,7 @@ def estimate_pdf_page_count(pdf_path: Path) -> int:
 
 
 def load_manifest() -> dict:
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8-sig"))
     for day in manifest.get("days", []):
         pdf_path = SLIDES_DIR / day["pdf"]
         if pdf_path.exists() and not day.get("page_count"):
