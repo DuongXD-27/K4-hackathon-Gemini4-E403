@@ -725,4 +725,27 @@
     </div>
 
 </body>
+<script>
+  // Gửi text bôi đen lên parent window qua postMessage
+  // Đây là cách duy nhất đáng tin để vượt qua iframe boundary
+  var _selDebounce = null;
+  document.addEventListener('selectionchange', function () {
+    clearTimeout(_selDebounce);
+    _selDebounce = setTimeout(function () {
+      var sel = window.getSelection();
+      var text = sel ? sel.toString() : '';
+      window.parent.postMessage({ type: 'SLIDE_SELECTION', text: text }, '*');
+    }, 250);
+  });
+
+  // Gửi luôn khi thả chuột (mouseup) để đảm bảo không bị miss
+  document.addEventListener('mouseup', function () {
+    clearTimeout(_selDebounce);
+    _selDebounce = setTimeout(function () {
+      var sel = window.getSelection();
+      var text = sel ? sel.toString() : '';
+      window.parent.postMessage({ type: 'SLIDE_SELECTION', text: text }, '*');
+    }, 100);
+  });
+</script>
 </html>
