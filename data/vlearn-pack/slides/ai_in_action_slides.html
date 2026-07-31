@@ -726,6 +726,12 @@
 
 </body>
 <script>
+  // Khi load xong, gửi toàn bộ text của bài giảng lên cho LLM làm bối cảnh chung
+  window.addEventListener('load', function() {
+    var fullText = document.body.innerText;
+    window.parent.postMessage({ type: 'SLIDE_FULL_TEXT', text: fullText }, '*');
+  });
+
   // Gửi text bôi đen lên parent window qua postMessage
   // Đây là cách duy nhất đáng tin để vượt qua iframe boundary
   var _selDebounce = null;
