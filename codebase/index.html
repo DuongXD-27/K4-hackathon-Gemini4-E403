@@ -11,188 +11,126 @@
     :root {
       color-scheme: dark;
       --bg: #0a0d14;
-      --panel: #121826;
-      --panel-2: #172033;
       --line: rgba(148, 163, 184, 0.2);
       --text: #eef2ff;
       --muted: #9aa8bd;
-      --soft: #cbd5e1;
       --indigo: #6366f1;
       --indigo-2: #818cf8;
       --blue: #2563eb;
       --student: #315cda;
-      --doc: #f8fafc;
-      --doc-text: #1e293b;
       --amber-bg: rgba(245, 158, 11, 0.13);
       --amber-line: #f59e0b;
       --green-bg: rgba(34, 197, 94, 0.13);
       --green-line: #22c55e;
       --shadow: 0 24px 70px rgba(0, 0, 0, 0.36);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    *, *::before, *::after { box-sizing: border-box; }
 
-    body {
+    /* ── True viewport layout — NO page scroll ── */
+    html, body {
+      height: 100%;
       margin: 0;
-      min-height: 100vh;
+      overflow: hidden;
       background:
         radial-gradient(circle at 18% 8%, rgba(99, 102, 241, 0.24), transparent 30%),
         linear-gradient(135deg, #0a0d14 0%, #111827 48%, #0c1220 100%);
       color: var(--text);
     }
 
-    button,
-    textarea,
-    select {
-      font: inherit;
-    }
+    button, textarea, select { font: inherit; }
 
     .app {
-      width: min(1440px, 100%);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      max-width: 1440px;
       margin: 0 auto;
-      padding: 28px;
+      padding: 0 24px;
     }
 
+    /* ── Topbar ── */
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 18px;
-      padding: 8px 2px 24px;
+      flex-shrink: 0;
+      padding: 16px 0 12px;
+      border-bottom: 1px solid var(--line);
     }
 
-    .brand {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    .brand { display: flex; flex-direction: column; gap: 4px; }
 
     .brand h1 {
       margin: 0;
-      font-size: clamp(1.45rem, 2.4vw, 2.35rem);
-      line-height: 1.08;
-      letter-spacing: 0;
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      line-height: 1.1;
     }
 
     .brand p {
       margin: 0;
       color: var(--muted);
-      font-size: 0.98rem;
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 38px;
-      padding: 0 14px;
-      border: 1px solid rgba(129, 140, 248, 0.28);
-      border-radius: 999px;
-      color: #dbeafe;
-      background: rgba(99, 102, 241, 0.1);
-      white-space: nowrap;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: #22c55e;
-      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.14);
+      font-size: 0.84rem;
     }
 
     .provider-selector {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      min-height: 38px;
+      min-height: 36px;
       padding: 0 4px 0 14px;
       border: 1px solid rgba(129, 140, 248, 0.28);
       border-radius: 999px;
       background: rgba(99, 102, 241, 0.1);
-      white-space: nowrap;
-      transition: border-color 180ms ease;
+      transition: border-color 180ms;
     }
+    .provider-selector:hover { border-color: rgba(129, 140, 248, 0.5); }
 
-    .provider-selector:hover {
-      border-color: rgba(129, 140, 248, 0.5);
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.14);
     }
 
     .provider-selector select {
       appearance: none;
-      -webkit-appearance: none;
       border: 0;
       background: transparent;
       color: #dbeafe;
       font-weight: 600;
-      font-size: 0.9rem;
-      font-family: inherit;
+      font-size: 0.88rem;
       cursor: pointer;
-      padding: 0 24px 0 4px;
+      padding: 0 22px 0 4px;
       outline: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 6px center;
+      background-position: right 4px center;
     }
+    .provider-selector select option { background: #1e293b; color: #e2e8f0; }
+    .provider-selector select:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .provider-selector select option {
-      background: #1e293b;
-      color: #e2e8f0;
-    }
-
-    .provider-selector select:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .lesson-selector {
-      min-width: min(100%, 300px);
-      border: 1px solid rgba(129, 140, 248, 0.28);
-      border-radius: 8px;
-      color: #dbeafe;
-      background: rgba(15, 23, 42, 0.74);
-      font-size: 0.84rem;
-      font-weight: 600;
-      outline: none;
-      padding: 10px 36px 10px 12px;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      transition: border-color 180ms ease, box-shadow 180ms ease;
-    }
-
-    .lesson-selector:hover,
-    .lesson-selector:focus {
-      border-color: rgba(129, 140, 248, 0.62);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-    }
-
-    .lesson-selector option {
-      background: #1e293b;
-      color: #e2e8f0;
-    }
-
+    /* ── Workspace: two columns, each scrolls independently ── */
     .workspace {
+      flex: 1;
+      min-height: 0;
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-      gap: 22px;
-      align-items: start;
+      gap: 16px;
+      padding: 16px 0;
+      overflow: hidden;
     }
 
     .panel {
       min-width: 0;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 10px;
       background: linear-gradient(180deg, rgba(23, 32, 51, 0.94), rgba(18, 24, 38, 0.96));
       box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
@@ -201,267 +139,88 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      min-height: 72px;
-      padding: 20px 22px;
+      flex-shrink: 0;
+      min-height: 60px;
+      padding: 14px 20px;
       border-bottom: 1px solid var(--line);
       background: rgba(15, 23, 42, 0.45);
     }
+    .panel-header h2 { margin: 0; font-size: 1rem; }
+    .mini-meta { color: var(--muted); font-size: 0.82rem; font-weight: 600; }
 
-    .panel-header h2 {
-      margin: 0;
-      font-size: 1.1rem;
-      letter-spacing: 0;
-    }
+    /* ── Left: Slide panel — scrolls through slides ── */
+    .slide-panel { /* inherits flex-column from .panel */ }
 
-    .mini-meta {
-      color: var(--muted);
-      font-size: 0.84rem;
-      font-weight: 600;
-    }
-
-    .slide-panel {
-      display: flex;
-      flex-direction: column;
-      /* Stick slide viewer on screen — chat can scroll independently */
-      position: sticky;
-      top: 28px;
-    }
-
-    .slide-body {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      padding: 0;
-    }
-
-    /* HTML slide iframe viewer */
-    .html-slide-wrapper {
-      flex: 1;
-      position: relative;
-      min-height: 0;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .html-slide-hint {
+    .slide-hint {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 18px;
+      flex-shrink: 0;
+      padding: 7px 16px;
       background: rgba(99, 102, 241, 0.1);
-      border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-      font-size: 0.8rem;
+      border-bottom: 1px solid rgba(99, 102, 241, 0.18);
+      font-size: 0.78rem;
       color: #a5b4fc;
       font-weight: 500;
-      flex-shrink: 0;
-    }
-
-    .html-slide-hint .hint-icon {
-      font-size: 1rem;
     }
 
     .selection-pill {
       display: none;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      background: rgba(99, 102, 241, 0.25);
-      border: 1px solid rgba(129, 140, 248, 0.4);
-      border-radius: 999px;
-      font-size: 0.78rem;
-      color: #c7d2fe;
+      gap: 5px;
       margin-left: auto;
-      max-width: 260px;
+      padding: 3px 9px;
+      background: rgba(99, 102, 241, 0.28);
+      border: 1px solid rgba(129, 140, 248, 0.45);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      color: #c7d2fe;
+      max-width: 220px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+    .selection-pill.active { display: flex; }
 
-    .selection-pill.active {
-      display: flex;
-    }
-
+    /* The iframe fills the rest of the left panel and scrolls internally */
     .html-slide-frame {
+      flex: 1;
+      min-height: 0;
       width: 100%;
       border: 0;
-      /* Height = 1.5 slides at 16:9. Since iframe width ≈ 100% of panel,
-         1 slide height = (panelWidth / 16 * 9). We set a fixed px that fits ~1.5 slides.
-         Using aspect-ratio trick: 1 slide = 56.25vw * panelRatio / 16 * 9.
-         Simpler: just use a fixed height that looks like 1.5 slides */
-      height: calc(56.25% * 1.5);
-      min-height: 480px;
-      max-height: 640px;
-      background: #f8fafc;
+      background: #f0f2f5;
       display: block;
     }
 
-    .highlight-button {
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      border-radius: 999px;
-      color: #dbeafe;
-      background: rgba(15, 23, 42, 0.5);
-      cursor: pointer;
-      font-weight: 800;
-      transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
-    }
-
-    .slide-nav-button {
-      display: none;
-      width: 28px;
-      height: 28px;
-      padding: 0;
-    }
-
-    .highlight-button {
-      min-height: 28px;
-      padding: 0 12px;
-      font-size: 0.75rem;
-    }
-
-    .slide-nav-button:hover,
-    .highlight-button:hover {
-      border-color: rgba(129, 140, 248, 0.58);
-      background: rgba(99, 102, 241, 0.22);
-      transform: translateY(-1px);
-    }
-
-    .ocr-panel {
-      flex: 1;
-      min-height: 250px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 10px;
-      background: rgba(15, 23, 42, 0.72);
-    }
-
-    .ocr-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      min-height: 42px;
-      padding: 0 14px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-      color: #dbeafe;
-      font-size: 0.82rem;
-      font-weight: 800;
-    }
-
-    .ocr-status {
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .ocr-text {
-      flex: 1;
-      overflow: auto;
-      padding: 14px;
-      color: #dbeafe;
-      line-height: 1.65;
-      white-space: pre-wrap;
-      user-select: text;
-      cursor: text;
-      font-size: 0.9rem;
-    }
-
-    .chat-panel {
-      display: flex;
-      flex-direction: column;
-      min-height: 680px;
-    }
-
-    /* Selection display box — shows highlighted text separately from chat input */
-    .selection-display {
-      display: none;
-      flex-direction: column;
-      gap: 4px;
-      padding: 10px 14px;
-      margin: 0 16px 0;
-      border: 1px solid rgba(129, 140, 248, 0.35);
-      border-radius: 8px;
-      background: rgba(99, 102, 241, 0.08);
-    }
-
-    .selection-display.active {
-      display: flex;
-    }
-
-    .selection-display-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      color: #818cf8;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .selection-clear-btn {
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      font-size: 0.78rem;
-      padding: 0 4px;
-      line-height: 1;
-      border-radius: 4px;
-      transition: color 140ms ease;
-    }
-
-    .selection-clear-btn:hover {
-      color: #f87171;
-    }
-
-    .selection-display-text {
-      font-size: 0.84rem;
-      color: #c7d2fe;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      max-height: 80px;
-      overflow-y: auto;
-      word-break: break-word;
-    }
+    /* ── Right: Chat panel ── */
+    .chat-panel { /* inherits flex-column from .panel */ }
 
     .chat-stream {
-      display: flex;
       flex: 1;
-      flex-direction: column;
-      gap: 16px;
       min-height: 0;
       overflow-y: auto;
-      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding: 18px 20px;
       scroll-behavior: smooth;
     }
 
-    .message {
-      display: flex;
-      width: 100%;
-    }
-
-    .message.student {
-      justify-content: flex-end;
-    }
+    .message { display: flex; width: 100%; }
+    .message.student { justify-content: flex-end; }
 
     .bubble {
       max-width: min(86%, 720px);
       border-radius: 8px;
-      padding: 15px 16px;
+      padding: 13px 15px;
       line-height: 1.58;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
     }
-
     .student .bubble {
       color: #f8fafc;
       background: linear-gradient(135deg, var(--student), var(--indigo));
-      box-shadow: 0 12px 26px rgba(49, 92, 218, 0.25);
+      box-shadow: 0 10px 24px rgba(49, 92, 218, 0.25);
     }
-
     .tutor .bubble {
       width: min(92%, 760px);
       border: 1px solid rgba(148, 163, 184, 0.22);
@@ -469,252 +228,177 @@
       background: rgba(30, 41, 59, 0.92);
     }
 
-    .section {
-      padding: 2px 0;
-    }
+    .section { padding: 2px 0; }
+    .section h3 { margin: 0 0 8px; font-size: 0.94rem; }
+    .section p { margin: 0; }
 
-    .section h3 {
-      margin: 0 0 9px;
-      font-size: 0.96rem;
-      letter-spacing: 0;
-    }
+    .section-divider { height: 1px; margin: 14px 0; background: rgba(148, 163, 184, 0.22); }
 
-    .section p {
-      margin: 0;
-    }
-
-    .section-divider {
-      height: 1px;
-      margin: 16px 0;
-      background: rgba(148, 163, 184, 0.22);
-    }
-
-    .misconception,
-    .check {
+    .misconception, .check {
       border-left: 4px solid;
       border-radius: 7px;
-      padding: 13px 14px;
+      padding: 12px 13px;
     }
-
-    .misconception {
-      border-color: var(--amber-line);
-      background: var(--amber-bg);
-    }
-
-    .check {
-      border-color: var(--green-line);
-      background: var(--green-bg);
-    }
+    .misconception { border-color: var(--amber-line); background: var(--amber-bg); }
+    .check { border-color: var(--green-line); background: var(--green-bg); }
 
     .misconception-wrap {
-      max-height: 260px;
-      opacity: 1;
-      overflow: hidden;
+      max-height: 260px; opacity: 1; overflow: hidden;
       transition: max-height 360ms ease, opacity 260ms ease, margin 360ms ease;
     }
+    .misconception-wrap.hidden { max-height: 0; opacity: 0; margin: 0; }
 
-    .misconception-wrap.hidden {
-      max-height: 0;
-      opacity: 0;
-      margin: 0;
-    }
+    .feedback-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
 
-    .feedback-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 16px;
-    }
-
-    .feedback,
-    .skip {
+    .feedback, .skip {
       border: 1px solid rgba(148, 163, 184, 0.22);
       border-radius: 999px;
-      min-height: 32px;
-      padding: 0 11px;
+      min-height: 30px;
+      padding: 0 10px;
       color: #b8c4d6;
       background: rgba(15, 23, 42, 0.5);
       cursor: pointer;
-      transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
-      font-size: 0.83rem;
+      transition: color 180ms, border-color 180ms, background 180ms, transform 180ms;
+      font-size: 0.81rem;
       font-weight: 600;
     }
-
-    .feedback:hover,
-    .skip:hover {
+    .feedback:hover, .skip:hover {
       color: #fff;
       border-color: rgba(129, 140, 248, 0.5);
       background: rgba(99, 102, 241, 0.2);
       transform: translateY(-1px);
     }
-
     .feedback.selected {
       color: #fff;
       border-color: rgba(129, 140, 248, 0.72);
       background: rgba(99, 102, 241, 0.42);
     }
 
+    /* ── Composer area (bottom of chat) ── */
     .composer {
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding: 12px 16px 16px;
+      padding: 10px 16px 14px;
       border-top: 1px solid var(--line);
       background: rgba(15, 23, 42, 0.58);
+    }
+
+    /* Selection display box — shown when text is highlighted */
+    .selection-display {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 12px;
+      border: 1px solid rgba(129, 140, 248, 0.38);
+      border-radius: 7px;
+      background: rgba(99, 102, 241, 0.09);
+      animation: fadeIn 200ms ease;
+    }
+    .selection-display.active { display: flex; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    .selection-display-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #818cf8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .selection-clear-btn {
+      background: none; border: none;
+      color: #64748b; cursor: pointer;
+      font-size: 0.76rem; padding: 0 3px;
+      border-radius: 3px;
+      transition: color 140ms;
+    }
+    .selection-clear-btn:hover { color: #f87171; }
+
+    .selection-display-text {
+      font-size: 0.83rem;
+      color: #c7d2fe;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      max-height: 72px;
+      overflow-y: auto;
+      word-break: break-word;
     }
 
     .composer-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
-      gap: 12px;
+      gap: 10px;
     }
 
     .composer textarea {
       width: 100%;
-      min-height: 54px;
-      max-height: 128px;
+      min-height: 50px;
+      max-height: 120px;
       resize: vertical;
       border: 1px solid rgba(148, 163, 184, 0.24);
       border-radius: 8px;
       outline: none;
-      padding: 14px 15px;
+      padding: 12px 14px;
       color: var(--text);
       background: rgba(15, 23, 42, 0.84);
       line-height: 1.45;
     }
-
     .composer textarea:focus {
       border-color: rgba(129, 140, 248, 0.72);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.14);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
     }
 
     .send {
       align-self: stretch;
-      min-width: 98px;
+      min-width: 90px;
       border: 0;
       border-radius: 8px;
-      padding: 0 18px;
+      padding: 0 16px;
       color: #fff;
       background: linear-gradient(135deg, var(--indigo), var(--blue));
       cursor: pointer;
       font-weight: 800;
-      box-shadow: 0 14px 28px rgba(99, 102, 241, 0.27);
-      transition: transform 180ms ease, filter 180ms ease;
+      font-size: 0.9rem;
+      box-shadow: 0 12px 24px rgba(99, 102, 241, 0.27);
+      transition: transform 180ms, filter 180ms;
     }
-
-    .send:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.06);
-    }
-
-    .send:disabled {
-      cursor: wait;
-      opacity: 0.72;
-      transform: none;
-      filter: none;
-    }
+    .send:hover { transform: translateY(-1px); filter: brightness(1.06); }
+    .send:disabled { cursor: wait; opacity: 0.72; transform: none; filter: none; }
 
     .loading .bubble {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: #dbeafe;
-      background: rgba(30, 41, 59, 0.74);
+      display: inline-flex; align-items: center; gap: 10px;
+      color: #dbeafe; background: rgba(30, 41, 59, 0.74);
     }
 
     .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(219, 234, 254, 0.32);
+      width: 15px; height: 15px;
+      border: 2px solid rgba(219, 234, 254, 0.3);
       border-top-color: #dbeafe;
-      border-radius: 999px;
+      border-radius: 50%;
       animation: spin 800ms linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @media (max-width: 900px) {
-      .app {
-        padding: 18px;
-      }
-
-      .topbar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .panel-header {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .lesson-selector {
-        width: 100%;
-      }
-
-      .slide-selectors {
-        grid-template-columns: 1fr;
-        width: 100%;
-      }
-
-      .workspace {
-        grid-template-columns: 1fr;
-      }
-
-      .panel {
-        min-height: auto;
-      }
-
-      .slide-viewer {
-        max-height: none;
-      }
-
-      .bubble,
-      .tutor .bubble {
-        max-width: 100%;
-        width: auto;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .app {
-        padding: 14px;
-      }
-
-      .panel-header,
-      .slide-body,
-      .chat-stream {
-        padding: 16px;
-      }
-
-      .slide-viewer {
-        min-height: 230px;
-      }
-
-      .ocr-text {
-        font-size: 0.84rem;
-      }
-
-      .composer {
-        grid-template-columns: 1fr;
-      }
-
-      .send {
-        min-height: 48px;
-      }
+    @media (max-width: 860px) {
+      .workspace { grid-template-columns: 1fr; overflow-y: auto; }
+      .panel { min-height: 400px; }
+      .html-slide-frame { height: 500px; flex: none; }
     }
   </style>
 </head>
 <body>
-  <main class="app">
+  <div class="app">
     <header class="topbar">
       <div class="brand">
-        <h1>Comprehension Gap Detector</h1>
-        <p>AI tutor interface for online learning</p>
+        <h1>🧠 Comprehension Gap Detector</h1>
+        <p>Bôi đen đoạn slide → AI giải thích & phát hiện hiểu nhầm</p>
       </div>
       <div class="provider-selector">
         <span class="status-dot"></span>
@@ -728,95 +412,66 @@
     </header>
 
     <section class="workspace" aria-label="Comprehension Gap Detector workspace">
+
+      <!-- LEFT: Slide viewer -->
       <article class="panel slide-panel">
         <header class="panel-header">
           <h2>📄 Nội dung bài giảng</h2>
           <span class="mini-meta">AI in Action — Day 1 &amp; Day 2</span>
         </header>
-        <div class="slide-body">
-          <div class="html-slide-wrapper">
-            <div class="html-slide-hint">
-              <span class="hint-icon">✍️</span>
-              <span>Bôi đen bất kỳ đoạn nào bên dưới → AI sẽ đọc đoạn đó làm ngữ cảnh</span>
-              <span class="selection-pill" id="selectionPill">📌 <span id="selectionPreview"></span></span>
-            </div>
-            <iframe
-              id="slideHtmlFrame"
-              class="html-slide-frame"
-              src="/slides/ai_in_action_slides.html"
-              title="AI in Action slide viewer"
-              sandbox="allow-same-origin allow-scripts"
-            ></iframe>
-          </div>
+        <div class="slide-hint">
+          <span>✍️</span>
+          <span>Bôi đen bất kỳ đoạn nào → AI đọc làm ngữ cảnh</span>
+          <span class="selection-pill" id="selectionPill">📌 <span id="selectionPreview"></span></span>
         </div>
+        <iframe
+          id="slideHtmlFrame"
+          class="html-slide-frame"
+          src="/slides/ai_in_action_slides.html"
+          title="AI in Action slide viewer"
+        ></iframe>
       </article>
 
+      <!-- RIGHT: Chat panel -->
       <article class="panel chat-panel">
         <header class="panel-header">
-          <h2>AI Tutor</h2>
+          <h2>🤖 AI Tutor</h2>
           <span class="mini-meta">Gap-aware chat</span>
         </header>
 
         <div class="chat-stream" id="chatStream" aria-live="polite">
-          <div class="message student">
-            <div class="bubble">Few-shot prompting có giống với fine-tuning không vì cả hai đều dùng ví dụ?</div>
-          </div>
-
           <div class="message tutor">
-            <div class="bubble tutor-response">
-              <div class="section answer">
-                <h3>Trả lời:</h3>
-                <p>Không, hai kỹ thuật này khác nhau hoàn toàn. Few-shot prompting cung cấp ví dụ <em>trong prompt</em> lúc inference — model không học gì thêm, trọng số không thay đổi [trang 14]. Fine-tuning thì cập nhật trọng số model bằng cách huấn luyện lại trên tập dữ liệu mới — đây là quá trình tốn kém và xảy ra trước khi deploy.</p>
-              </div>
-
-              <div class="section-divider"></div>
-
-              <div class="misconception-wrap">
-                <div class="section misconception">
-                  <h3>Mình nhận ra bạn có thể đang nhầm:</h3>
-                  <p>Few-shot và fine-tuning đều <em>dùng ví dụ</em>, nhưng ví dụ trong few-shot chỉ là ngữ cảnh tạm thời trong prompt, không "dạy" gì cho model. Fine-tuning mới thực sự thay đổi model.</p>
-                </div>
-                <div class="section-divider"></div>
-              </div>
-
-              <div class="section check">
-                <h3>Câu kiểm tra nhanh:</h3>
-                <p>"Nếu bạn muốn model luôn trả lời theo phong cách nhất định <em>mà không cần nhắc lại mỗi lần</em>, bạn nên dùng kỹ thuật nào: Few-shot hay Fine-tuning? Vì sao?"</p>
-              </div>
-
-              <div class="feedback-row">
-                <button class="feedback" type="button">👍 Hữu ích</button>
-                <button class="feedback" type="button">👎 Quá khó</button>
-                <button class="feedback" type="button">👎 Không liên quan</button>
-                <button class="skip" type="button">Bỏ qua →</button>
-              </div>
+            <div class="bubble" style="border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.08);">
+              👋 Chào! Hãy <strong>bôi đen</strong> đoạn nội dung bạn muốn hỏi bên trái, rồi gõ câu hỏi bên dưới.
             </div>
           </div>
         </div>
 
         <form class="composer" id="composer">
+          <!-- Selection display: shown when user highlights text -->
           <div class="selection-display" id="selectionDisplay">
             <div class="selection-display-label">
               <span>✍️ Đoạn đang bôi đen (ngữ cảnh AI)</span>
-              <button class="selection-clear-btn" id="selectionClearBtn" type="button" title="Xóa bôi đen">✕ Xóa</button>
+              <button class="selection-clear-btn" id="selectionClearBtn" type="button">✕ Xóa</button>
             </div>
             <div class="selection-display-text" id="selectionDisplayText"></div>
           </div>
           <div class="composer-row">
-            <textarea id="questionInput" placeholder="Bôi đen đoạn slide bên trái rồi gõ câu hỏi của bạn..." rows="2"></textarea>
+            <textarea id="questionInput" placeholder="Bôi đen đoạn slide bên trái rồi gõ câu hỏi..." rows="2"></textarea>
             <button class="send" id="sendButton" type="submit">Gửi ➤</button>
           </div>
         </form>
       </article>
     </section>
-  </main>
+  </div>
 
   <script>
     (async function main() {
-      /* ───────── 1. Fetch & parse .env ───────── */
+
+      /* ── 1. Load .env ── */
       let ENV = {};
       try {
-        const res = await fetch("../.env");
+        const res = await fetch("/.env");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
         text.split("\n").forEach(line => {
@@ -824,33 +479,34 @@
           if (!line || line.startsWith("#")) return;
           const idx = line.indexOf("=");
           if (idx === -1) return;
-          const key = line.slice(0, idx).trim();
-          const val = line.slice(idx + 1).trim();
-          ENV[key] = val;
+          ENV[line.slice(0, idx).trim()] = line.slice(idx + 1).trim();
         });
         console.log(".env loaded — ACTIVE_PROVIDER:", ENV.ACTIVE_PROVIDER || "(chưa set)");
       } catch (err) {
-        console.warn("Không đọc được .env, app vẫn chạy ở chế độ không API key:", err.message);
+        console.warn("Không đọc được .env:", err.message);
       }
 
-      /* ───────── 2. DOM refs ───────── */
-      const chatStream = document.querySelector("#chatStream");
-      const composer = document.querySelector("#composer");
-      const questionInput = document.querySelector("#questionInput");
-      const sendButton = document.querySelector("#sendButton");
-      const providerSelect = document.querySelector("#providerSelect");
-      const slideHtmlFrame = document.querySelector("#slideHtmlFrame");
-      const selectionPill = document.querySelector("#selectionPill");
-      const selectionPreview = document.querySelector("#selectionPreview");
+      /* ── 2. DOM refs ── */
+      const chatStream       = document.getElementById("chatStream");
+      const composer         = document.getElementById("composer");
+      const questionInput    = document.getElementById("questionInput");
+      const sendButton       = document.getElementById("sendButton");
+      const providerSelect   = document.getElementById("providerSelect");
+      const slideHtmlFrame   = document.getElementById("slideHtmlFrame");
+      const selectionPill    = document.getElementById("selectionPill");
+      const selectionPreview = document.getElementById("selectionPreview");
+      const selectionDisplay = document.getElementById("selectionDisplay");
+      const selectionDisplayText = document.getElementById("selectionDisplayText");
+      const selectionClearBtn    = document.getElementById("selectionClearBtn");
 
-      /* ───────── 3. Slide context & System prompt ───────── */
-      let SLIDE_CONTEXT = "(Chưa có đoạn nào được bôi đen.)";
-      let SYSTEM_PROMPT = "";
+      /* ── 3. System prompt ── */
+      let SLIDE_CONTEXT = "";
+      let SYSTEM_PROMPT = buildSystemPrompt("");
 
       function buildSystemPrompt(selectedText) {
         const ctx = selectedText && selectedText.trim()
           ? `Đoạn slide học viên đang bôi đen:\n---\n${selectedText.trim()}\n---`
-          : "(Học viên chưa bôi đen đoạn nào cụ thể. Hãy gợi ý họ bôi đen nội dung muốn hỏi.)";
+          : "(Học viên chưa bôi đen đoạn nào. Hãy gợi ý họ bôi đen nội dung muốn hỏi.)";
         return `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide HTML và vừa bôi đen một đoạn rồi hỏi bạn.
 ${ctx}
 Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc JSON sau, không thêm gì khác ngoài JSON:
@@ -858,59 +514,59 @@ Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc J
   "answer": "Câu trả lời giải thích khái niệm, dựa vào đoạn bôi đen nếu có. Nếu không có căn cứ trong đoạn, ghi rõ 'thông tin này ngoài đoạn đang xem'.",
   "has_misconception": true hoặc false,
   "misconception": "Chỉ điền nếu has_misconception=true: mô tả ngắn gọn học viên đang nhầm điểm gì và đúng phải là gì. Nếu false, để chuỗi rỗng.",
-  "check_question": "1 câu hỏi ngắn kiểm tra xem học viên đã hiểu đúng chưa. Phải liên quan trực tiếp đến câu hỏi vừa được hỏi."
+  "check_question": "1 câu hỏi ngắn kiểm tra xem học viên đã hiểu đúng chưa."
 }
 Quy tắc:
-- has_misconception = true CHỈ KHI câu hỏi ẩn chứa nhầm lẫn rõ ràng. Đừng flag false positive.
-- Nếu câu hỏi quá ngắn/mơ hồ (dưới 10 chữ): answer = "Bạn đang thắc mắc về phần nào cụ thể? Hãy mô tả thêm để mình hỗ trợ chính xác hơn.", has_misconception = false, check_question = "".
-- Luôn dùng tiếng Việt, giọng thân thiện như mentor, không học thuật cứng nhắc.`;
+- has_misconception = true CHỈ KHI câu hỏi ẩn chứa nhầm lẫn rõ ràng.
+- Nếu câu hỏi quá ngắn/mơ hồ (dưới 10 chữ): answer = "Bạn đang thắc mắc về phần nào cụ thể? Hãy mô tả thêm.", has_misconception = false, check_question = "".
+- Luôn dùng tiếng Việt, giọng thân thiện như mentor.`;
       }
 
-      // Khởi tạo SYSTEM_PROMPT ban đầu (chưa có selection)
-      SYSTEM_PROMPT = buildSystemPrompt("");
+      /* ── 4. Selection capture — nhận postMessage từ iframe slide ── */
+      // Slide HTML tự gửi selection qua postMessage mỗi khi user bôi đen.
+      // Đây là cách duy nhất reliable để vượt qua iframe boundary.
 
-      /* ───────── 3b. Capture selection từ iframe ───────── */
-      function captureSelection() {
-        let selected = "";
-        // Thử lấy selection từ bên trong iframe (same-origin)
-        try {
-          const iframeWin = slideHtmlFrame.contentWindow;
-          if (iframeWin) {
-            selected = (iframeWin.getSelection() || "").toString().trim();
-          }
-        } catch (e) {}
-        // Fallback: lấy từ main window
-        if (!selected) {
-          selected = window.getSelection().toString().trim();
-        }
-        if (selected.length > 10) {
-          SLIDE_CONTEXT = selected;
-          SYSTEM_PROMPT = buildSystemPrompt(selected);
-          const preview = selected.length > 50 ? `${selected.substring(0, 50)}...` : selected;
+      function applySelection(text) {
+        const trimmed = (text || "").trim();
+        if (trimmed.length > 8) {
+          SLIDE_CONTEXT = trimmed;
+          SYSTEM_PROMPT = buildSystemPrompt(trimmed);
+
+          const preview = trimmed.length > 45 ? trimmed.substring(0, 45) + "…" : trimmed;
           selectionPreview.textContent = preview;
           selectionPill.classList.add("active");
-          questionInput.placeholder = `Đã bôi đen "${preview.substring(0, 30)}..." — gõ câu hỏi của bạn`;
-          if (!questionInput.value.trim()) {
-            questionInput.value = `Về đoạn: "${preview.substring(0, 40)}"\n`;
-          }
+
+          selectionDisplayText.textContent = trimmed;
+          selectionDisplay.classList.add("active");
+
+          questionInput.placeholder = "Đoạn đã bôi đen ở trên. Gõ câu hỏi của bạn...";
           questionInput.focus();
         }
       }
 
-      // Lắng nghe mouseup trên iframe khi đã load xong
-      slideHtmlFrame.addEventListener("load", () => {
+      function clearSelection() {
+        SLIDE_CONTEXT = "";
+        SYSTEM_PROMPT = buildSystemPrompt("");
+        selectionDisplay.classList.remove("active");
+        selectionDisplayText.textContent = "";
+        selectionPill.classList.remove("active");
+        selectionPreview.textContent = "";
+        questionInput.placeholder = "Bôi đen đoạn slide bên trái rồi gõ câu hỏi...";
+      }
+
+      selectionClearBtn.addEventListener("click", clearSelection);
+
+      // Lắng nghe postMessage từ iframe slide
+      window.addEventListener("message", function (event) {
+        // Chỉ nhận từ đúng iframe, bỏ qua mọi source khác
         try {
-          slideHtmlFrame.contentDocument.addEventListener("mouseup", captureSelection);
-        } catch (e) {
-          console.warn("Không thể attach mouseup vào iframe:", e);
-        }
-      });
-      // Cũng lắng nghe mouseup trên main document (khi focus ra ngoài iframe)
-      document.addEventListener("mouseup", (e) => {
-        if (e.target !== slideHtmlFrame) captureSelection();
+          if (event.source !== slideHtmlFrame.contentWindow) return;
+        } catch (e) { return; }
+        if (!event.data || event.data.type !== "SLIDE_SELECTION") return;
+        applySelection(event.data.text);
       });
 
-      /* ───────── 4. Multi-provider adapters ───────── */
+      /* ── 5. Multi-provider adapters ── */
       const PROVIDERS = {
         gemini: {
           name: "Gemini",
@@ -923,13 +579,15 @@ Quy tắc:
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  contents: [{ parts: [{ text: SYSTEM_PROMPT + "\n\nCâu hỏi học viên: " + userText }] }]
+                  // Gemini API: systemInstruction riêng, contents chỉ chứa user message
+                  systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+                  contents: [{ role: "user", parts: [{ text: userText }] }]
                 })
               }
             };
           },
           parseResponse(data) {
-            if (data.error) throw new Error(data.error.message || "Lỗi từ Gemini API");
+            if (data.error) throw new Error(data.error.message || "Lỗi Gemini: " + JSON.stringify(data.error));
             return data.candidates[0].content.parts[0].text;
           }
         },
@@ -980,16 +638,14 @@ Quy tắc:
                   model: ENV.ANTHROPIC_MODEL || "claude-sonnet-4-20250514",
                   max_tokens: 1024,
                   system: SYSTEM_PROMPT,
-                  messages: [
-                    { role: "user", content: userText }
-                  ]
+                  messages: [{ role: "user", content: userText }]
                 })
               }
             };
           },
           parseResponse(data) {
             if (data.error) throw new Error(data.error.message || "Lỗi từ Anthropic API");
-            if (data.type === "error") throw new Error(data.error?.message || "Lỗi từ Anthropic API");
+            if (data.type === "error") throw new Error(data.error?.message || "Lỗi từ Anthropic");
             return data.content[0].text;
           }
         },
@@ -1023,11 +679,7 @@ Quy tắc:
         }
       };
 
-      /* ───────── 5. Provider selector init ───────── */
-      function getActiveProvider() {
-        return providerSelect.value;
-      }
-
+      /* ── 6. Provider selector ── */
       function initProviderSelector() {
         if (ENV.ACTIVE_PROVIDER && PROVIDERS[ENV.ACTIVE_PROVIDER]) {
           providerSelect.value = ENV.ACTIVE_PROVIDER;
@@ -1041,55 +693,45 @@ Quy tắc:
         });
       }
 
-      /* ───────── 6. Utility functions ───────── */
+      /* ── 7. Chat utilities ── */
       function scrollToLatest() {
         chatStream.scrollTop = chatStream.scrollHeight;
       }
 
       function wireTutorActions(root = document) {
-        root.querySelectorAll(".feedback").forEach((button) => {
-          button.addEventListener("click", () => {
-            const row = button.closest(".feedback-row");
-            row.querySelectorAll(".feedback").forEach((item) => item.classList.remove("selected"));
-            button.classList.add("selected");
+        root.querySelectorAll(".feedback").forEach(btn => {
+          btn.addEventListener("click", () => {
+            btn.closest(".feedback-row").querySelectorAll(".feedback").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
           });
         });
-
-        root.querySelectorAll(".skip").forEach((button) => {
-          button.addEventListener("click", () => {
-            const bubble = button.closest(".tutor-response");
-            const target = bubble.querySelector(".misconception-wrap");
-            if (target) {
-              target.classList.add("hidden");
-              button.textContent = "Đã bỏ qua";
-              button.disabled = true;
-            }
+        root.querySelectorAll(".skip").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const wrap = btn.closest(".tutor-response")?.querySelector(".misconception-wrap");
+            if (wrap) { wrap.classList.add("hidden"); btn.textContent = "Đã bỏ qua"; btn.disabled = true; }
           });
         });
       }
 
       function addStudentMessage(text) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "message student";
-        const bubble = document.createElement("div");
-        bubble.className = "bubble";
-        bubble.textContent = text;
-        wrapper.appendChild(bubble);
-        chatStream.appendChild(wrapper);
+        const el = document.createElement("div");
+        el.className = "message student";
+        el.innerHTML = `<div class="bubble">${text.replace(/</g,"&lt;")}</div>`;
+        chatStream.appendChild(el);
       }
 
       function addLoadingMessage(providerName) {
-        const wrapper = document.createElement("div");
-        wrapper.className = "message tutor loading";
-        wrapper.innerHTML = `<div class="bubble"><span class="spinner" aria-hidden="true"></span>🤔 Đang hỏi ${providerName}...</div>`;
-        chatStream.appendChild(wrapper);
-        return wrapper;
+        const el = document.createElement("div");
+        el.className = "message tutor loading";
+        el.innerHTML = `<div class="bubble"><span class="spinner" aria-hidden="true"></span>🤔 Đang hỏi ${providerName}...</div>`;
+        chatStream.appendChild(el);
+        return el;
       }
 
       function renderTutorResponse(json) {
-        const msgDiv = document.createElement("div");
-        msgDiv.className = "message tutor";
-        msgDiv.innerHTML = `
+        const el = document.createElement("div");
+        el.className = "message tutor";
+        el.innerHTML = `
           <div class="bubble tutor-response">
             <div class="section answer">
               <h3>📖 Trả lời:</h3>
@@ -1098,48 +740,43 @@ Quy tắc:
             <div class="section-divider"></div>
             <div class="misconception-wrap${json.has_misconception ? "" : " hidden"}">
               <div class="section misconception">
-                <h3>💡 Mình nhận ra bạn có thể đang nhầm:</h3>
+                <h3>💡 Có thể bạn đang nhầm:</h3>
                 <p>${json.misconception || ""}</p>
               </div>
               <div class="section-divider"></div>
             </div>
             <div class="section check">
               <h3>✅ Câu kiểm tra nhanh:</h3>
-              <p>${json.check_question || "(Không cần kiểm tra thêm cho câu hỏi này.)"}</p>
+              <p>${json.check_question || "(Không cần kiểm tra thêm.)"}</p>
             </div>
             <div class="feedback-row">
               <button class="feedback" type="button">👍 Hữu ích</button>
-              <button class="feedback" type="button">👎 Quá khó</button>
-              <button class="feedback" type="button">👎 Không liên quan</button>
+              <button class="feedback" type="button">😕 Quá khó</button>
+              <button class="feedback" type="button">🚫 Không liên quan</button>
               <button class="skip" type="button">Bỏ qua →</button>
             </div>
           </div>`;
-        chatStream.appendChild(msgDiv);
-        wireTutorActions(msgDiv);
+        chatStream.appendChild(el);
+        wireTutorActions(el);
       }
 
       function renderError(message) {
-        const errDiv = document.createElement("div");
-        errDiv.className = "message tutor";
-        errDiv.innerHTML = `<div class="bubble" style="border-color:rgba(239,68,68,0.4);color:#fca5a5">⚠️ ${message}</div>`;
-        chatStream.appendChild(errDiv);
+        const el = document.createElement("div");
+        el.className = "message tutor";
+        el.innerHTML = `<div class="bubble" style="border-color:rgba(239,68,68,0.4);color:#fca5a5">⚠️ ${message}</div>`;
+        chatStream.appendChild(el);
       }
 
-      /* ───────── 7. Submit handler ───────── */
-      composer.addEventListener("submit", async (event) => {
-        event.preventDefault();
+      /* ── 8. Submit handler ── */
+      composer.addEventListener("submit", async (e) => {
+        e.preventDefault();
         const text = questionInput.value.trim();
         if (!text) return;
 
-        const providerId = getActiveProvider();
-        const provider = PROVIDERS[providerId];
-
-        if (!provider) {
-          renderError("Provider không hợp lệ.");
-          return;
-        }
+        const provider = PROVIDERS[providerSelect.value];
+        if (!provider) { renderError("Provider không hợp lệ."); return; }
         if (!provider.getKey()) {
-          renderError(`Chưa có API key cho ${provider.name}. Hãy thêm key vào file .env rồi reload trang.`);
+          renderError(`Chưa có API key cho ${provider.name}. Thêm key vào file .env rồi reload.`);
           return;
         }
 
@@ -1153,15 +790,33 @@ Quy tắc:
 
         try {
           const { url, options } = provider.buildRequest(text);
+          console.log("[DEBUG] Gửi tới", provider.name, "| SYSTEM_PROMPT snippet:", SYSTEM_PROMPT.substring(0, 120));
           const res = await fetch(url, options);
           const data = await res.json();
           const raw = provider.parseResponse(data);
-          const json = JSON.parse(raw.replace(/```json|```/g, "").trim());
+          console.log("[DEBUG] Raw response:", raw.substring(0, 300));
+          // Parse JSON — thử nhiều cách khác nhau
+          let json;
+          try {
+            // Loại bỏ markdown code fence và trim
+            const cleaned = raw.replace(/^```(?:json)?\s*/m, "").replace(/\s*```$/m, "").trim();
+            json = JSON.parse(cleaned);
+          } catch (parseErr) {
+            // Thử tìm JSON object đầu tiên trong response
+            const match = raw.match(/\{[\s\S]*\}/);
+            if (match) {
+              json = JSON.parse(match[0]);
+            } else {
+              // Fallback: render raw text nếu không parse được
+              json = { answer: raw, has_misconception: false, misconception: "", check_question: "" };
+            }
+          }
           loading.remove();
           renderTutorResponse(json);
         } catch (err) {
+          console.error("[ERROR]", err);
           loading.remove();
-          renderError(`Lỗi kết nối ${provider.name}: ${err.message}. Kiểm tra API key.`);
+          renderError(`Lỗi ${provider.name}: ${err.message}`);
         }
 
         questionInput.disabled = false;
@@ -1171,10 +826,10 @@ Quy tắc:
         scrollToLatest();
       });
 
-      /* ───────── 8. Init ───────── */
+      /* ── 9. Init ── */
       initProviderSelector();
       wireTutorActions();
-      // Không cần load slide metadata nữa — HTML iframe tự load
+
     })();
   </script>
 </body>
