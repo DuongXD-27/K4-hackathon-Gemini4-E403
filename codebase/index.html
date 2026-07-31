@@ -150,43 +150,6 @@
       cursor: not-allowed;
     }
 
-    .lesson-selector {
-      min-width: min(100%, 300px);
-      border: 1px solid rgba(129, 140, 248, 0.28);
-      border-radius: 8px;
-      color: #dbeafe;
-      background: rgba(15, 23, 42, 0.74);
-      font-size: 0.84rem;
-      font-weight: 600;
-      outline: none;
-      padding: 10px 36px 10px 12px;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%239aa8bd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      transition: border-color 180ms ease, box-shadow 180ms ease;
-    }
-
-    .lesson-selector:hover,
-    .lesson-selector:focus {
-      border-color: rgba(129, 140, 248, 0.62);
-      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
-    }
-
-    .lesson-selector option {
-      background: #1e293b;
-      color: #e2e8f0;
-    }
-
-    .slide-selectors {
-      display: grid;
-      grid-template-columns: minmax(120px, 0.55fr) minmax(160px, 1fr);
-      gap: 8px;
-      width: min(100%, 500px);
-    }
-
     .workspace {
       display: grid;
       grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
@@ -236,13 +199,12 @@
       display: flex;
       flex: 1;
       flex-direction: column;
-      gap: 14px;
       padding: 22px;
       min-height: 0;
     }
 
     .slide-viewer {
-      flex: 0 0 auto;
+      flex: 1;
       border-radius: 10px;
       overflow: hidden;
       display: flex;
@@ -251,7 +213,7 @@
       border: 1px solid rgba(99, 102, 241, 0.3);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
       aspect-ratio: 16 / 9;
-      max-height: 360px;
+      max-height: none;
       min-height: 260px;
       user-select: text;
       cursor: text;
@@ -335,6 +297,24 @@
       gap: 10px;
     }
 
+    .page-input {
+      width: 54px;
+      height: 28px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      color: #eef2ff;
+      background: rgba(15, 23, 42, 0.62);
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .page-input:focus {
+      border-color: rgba(129, 140, 248, 0.7);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+    }
+
     .slide-nav-button,
     .highlight-button {
       border: 1px solid rgba(148, 163, 184, 0.22);
@@ -365,52 +345,54 @@
       transform: translateY(-1px);
     }
 
-    .ocr-panel {
-      flex: 1;
-      min-height: 250px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 10px;
-      background: rgba(15, 23, 42, 0.72);
-    }
-
-    .ocr-header {
-      display: flex;
+    .selection-popover {
+      position: fixed;
+      z-index: 50;
+      display: none;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      min-height: 42px;
-      padding: 0 14px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-      color: #dbeafe;
+      gap: 8px;
+      max-width: min(360px, calc(100vw - 28px));
+      border: 1px solid rgba(129, 140, 248, 0.38);
+      border-radius: 8px;
+      padding: 9px 10px;
+      color: #e5e7eb;
+      background: rgba(15, 23, 42, 0.96);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.36);
       font-size: 0.82rem;
-      font-weight: 800;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 140ms ease, transform 140ms ease;
     }
 
-    .ocr-status {
-      color: var(--muted);
-      font-size: 0.75rem;
-      font-weight: 700;
+    .selection-popover.visible {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .selection-popover button {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 999px;
+      min-height: 28px;
+      padding: 0 10px;
+      color: #fff;
+      background: rgba(99, 102, 241, 0.78);
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 800;
       white-space: nowrap;
     }
 
-    .ocr-text {
-      flex: 1;
-      overflow: auto;
-      padding: 14px;
-      color: #dbeafe;
-      line-height: 1.65;
-      white-space: pre-wrap;
-      user-select: text;
-      cursor: text;
-      font-size: 0.9rem;
+    .selection-popover .dismiss-selection {
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.74);
     }
 
     .chat-panel {
       display: flex;
       flex-direction: column;
+      height: min(760px, calc(100vh - 132px));
     }
 
     .chat-stream {
@@ -452,6 +434,12 @@
       border: 1px solid rgba(148, 163, 184, 0.22);
       color: #e5e7eb;
       background: rgba(30, 41, 59, 0.92);
+    }
+
+    .message.skipped .bubble {
+      color: #cbd5e1;
+      border-color: rgba(148, 163, 184, 0.18);
+      background: rgba(15, 23, 42, 0.58);
     }
 
     .section {
@@ -631,15 +619,6 @@
         flex-direction: column;
       }
 
-      .lesson-selector {
-        width: 100%;
-      }
-
-      .slide-selectors {
-        grid-template-columns: 1fr;
-        width: 100%;
-      }
-
       .workspace {
         grid-template-columns: 1fr;
       }
@@ -674,10 +653,6 @@
         min-height: 230px;
       }
 
-      .ocr-text {
-        font-size: 0.84rem;
-      }
-
       .composer {
         grid-template-columns: 1fr;
       }
@@ -710,10 +685,7 @@
       <article class="panel slide-panel">
         <header class="panel-header">
           <h2>📄 Nội dung bài giảng</h2>
-          <div class="slide-selectors">
-            <select id="daySelect" class="lesson-selector" aria-label="Chọn ngày học"></select>
-            <select id="slideSelect" class="lesson-selector" aria-label="Chọn slide"></select>
-          </div>
+          <span class="mini-meta" id="activeSlideMeta">Slide 1 đang mở</span>
         </header>
         <div class="slide-body">
           <div class="slide-viewer" aria-label="Slide viewer" tabindex="0">
@@ -728,19 +700,14 @@
             <div class="slide-footer">
               <div class="slide-nav" aria-label="Điều hướng slide">
                 <button class="slide-nav-button" id="prevSlide" type="button" aria-label="Trang trước">←</button>
-                <span id="slideCounter">Trang 1 / 3</span>
+                <span>Trang</span>
+                <input class="page-input" id="pageInput" type="number" min="1" value="1" aria-label="Nhập trang">
+                <span id="slideCounter">/ 29</span>
                 <button class="slide-nav-button" id="nextSlide" type="button" aria-label="Trang sau">→</button>
               </div>
               <button class="highlight-button" id="highlightSlide" type="button">Highlight</button>
             </div>
           </div>
-          <section class="ocr-panel" aria-label="OCR text của slide hiện tại">
-            <header class="ocr-header">
-              <span>OCR text của slide hiện tại</span>
-              <span class="ocr-status" id="ocrStatus">Đang tải...</span>
-            </header>
-            <div class="ocr-text" id="ocrText" tabindex="0"></div>
-          </section>
         </div>
       </article>
 
@@ -751,39 +718,8 @@
         </header>
 
         <div class="chat-stream" id="chatStream" aria-live="polite">
-          <div class="message student">
-            <div class="bubble">Few-shot prompting có giống với fine-tuning không vì cả hai đều dùng ví dụ?</div>
-          </div>
-
           <div class="message tutor">
-            <div class="bubble tutor-response">
-              <div class="section answer">
-                <h3>Trả lời:</h3>
-                <p>Không, hai kỹ thuật này khác nhau hoàn toàn. Few-shot prompting cung cấp ví dụ <em>trong prompt</em> lúc inference — model không học gì thêm, trọng số không thay đổi [trang 14]. Fine-tuning thì cập nhật trọng số model bằng cách huấn luyện lại trên tập dữ liệu mới — đây là quá trình tốn kém và xảy ra trước khi deploy.</p>
-              </div>
-
-              <div class="section-divider"></div>
-
-              <div class="misconception-wrap">
-                <div class="section misconception">
-                  <h3>Mình nhận ra bạn có thể đang nhầm:</h3>
-                  <p>Few-shot và fine-tuning đều <em>dùng ví dụ</em>, nhưng ví dụ trong few-shot chỉ là ngữ cảnh tạm thời trong prompt, không "dạy" gì cho model. Fine-tuning mới thực sự thay đổi model.</p>
-                </div>
-                <div class="section-divider"></div>
-              </div>
-
-              <div class="section check">
-                <h3>Câu kiểm tra nhanh:</h3>
-                <p>"Nếu bạn muốn model luôn trả lời theo phong cách nhất định <em>mà không cần nhắc lại mỗi lần</em>, bạn nên dùng kỹ thuật nào: Few-shot hay Fine-tuning? Vì sao?"</p>
-              </div>
-
-              <div class="feedback-row">
-                <button class="feedback" type="button">👍 Hữu ích</button>
-                <button class="feedback" type="button">👎 Quá khó</button>
-                <button class="feedback" type="button">👎 Không liên quan</button>
-                <button class="skip" type="button">Bỏ qua →</button>
-              </div>
-            </div>
+            <div class="bubble">Xin chào! Mình là trợ lý học tập của bạn. Bạn có muốn mình giải thích nội dung trong slide này không?</div>
           </div>
         </div>
 
@@ -794,6 +730,11 @@
       </article>
     </section>
   </main>
+  <div class="selection-popover" id="selectionPopover" role="dialog" aria-live="polite">
+    <span>Bạn có muốn hỏi AI về nội dung này không?</span>
+    <button id="askSelection" type="button">Có</button>
+    <button class="dismiss-selection" id="dismissSelection" type="button">Không</button>
+  </div>
 
   <script>
     (async function main() {
@@ -823,19 +764,20 @@
       const questionInput = document.querySelector("#questionInput");
       const sendButton = document.querySelector("#sendButton");
       const providerSelect = document.querySelector("#providerSelect");
-      const daySelect = document.querySelector("#daySelect");
-      const slideSelect = document.querySelector("#slideSelect");
+      const activeSlideMeta = document.querySelector("#activeSlideMeta");
       const slideViewer = document.querySelector(".slide-viewer");
       const slideFileName = document.querySelector("#slideFileName");
       const slideDayBadge = document.querySelector("#slideDayBadge");
       const pdfFrame = document.querySelector("#pdfFrame");
       const slidePageBadge = document.querySelector("#slidePageBadge");
       const slideCounter = document.querySelector("#slideCounter");
+      const pageInput = document.querySelector("#pageInput");
       const prevSlide = document.querySelector("#prevSlide");
       const nextSlide = document.querySelector("#nextSlide");
       const highlightSlide = document.querySelector("#highlightSlide");
-      const ocrText = document.querySelector("#ocrText");
-      const ocrStatus = document.querySelector("#ocrStatus");
+      const selectionPopover = document.querySelector("#selectionPopover");
+      const askSelection = document.querySelector("#askSelection");
+      const dismissSelection = document.querySelector("#dismissSelection");
 
       /* ───────── 3. Slide context & System prompt ───────── */
       let SLIDES = [];
@@ -843,6 +785,8 @@
       let SLIDE_CONTEXT = "";
       let SYSTEM_PROMPT = "";
       let currentSlideIndex = 0;
+      let selectedSlideText = "";
+      let pdfHashSyncTimer = null;
       const ocrCache = new Map();
 
       function buildSystemPrompt(slideContext) {
@@ -872,28 +816,22 @@ Quy tắc:
           : `Chưa có OCR text cho ${lesson.day_title || lesson.dayTitle} — trang ${lesson.page}.`;
         return `[${lesson.day_title || lesson.dayTitle} — Trang ${lesson.page}]
 PDF: ${lesson.pdf}
-OCR text đang hiển thị:
+Nội dung trích xuất từ slide:
 ${ocr}`;
       }
 
       async function loadOcrText(lesson) {
-        ocrStatus.textContent = "Đang OCR...";
-        ocrText.textContent = "Đang trích xuất text từ PDF...";
         SLIDE_CONTEXT = getPromptContext(lesson, "");
         SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
 
         if (ocrCache.has(lesson.id)) {
           const cached = ocrCache.get(lesson.id);
-          ocrText.textContent = cached;
-          ocrStatus.textContent = "Đã tải OCR";
           SLIDE_CONTEXT = getPromptContext(lesson, cached);
           SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
           return;
         }
 
         if (location.protocol === "file:") {
-          ocrText.textContent = "Cần chạy qua backend `py codebase/server.py` để lấy OCR text.";
-          ocrStatus.textContent = "Chưa có backend";
           return;
         }
 
@@ -903,17 +841,18 @@ ${ocr}`;
           const data = await res.json();
           const text = data.text?.trim() || `Không tìm thấy text cho ${lesson.title}.`;
           ocrCache.set(lesson.id, text);
-          ocrText.textContent = text;
-          ocrStatus.textContent = data.source ? `Nguồn: ${data.source}` : "Đã tải OCR";
+          if (data.page && data.page_count && data.slide === lesson.id) {
+            pageInput.value = data.page;
+            slideCounter.textContent = `/ ${data.page_count}`;
+            slidePageBadge.textContent = `Trang ${data.page} / ${data.page_count}`;
+          }
           SLIDE_CONTEXT = getPromptContext(lesson, text);
           SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
         } catch (err) {
           console.warn("Không tải được OCR endpoint, dùng fallback:", err);
           const fallback = `Không tải được OCR cho ${lesson.title}.\nPDF: ${lesson.pdf}\nTrang: ${lesson.page}`;
-          ocrText.textContent = fallback;
           SLIDE_CONTEXT = getPromptContext(lesson, fallback);
           SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-          ocrStatus.textContent = "OCR lỗi";
         }
       }
 
@@ -923,42 +862,20 @@ ${ocr}`;
         const lesson = SLIDES[currentSlideIndex];
         SLIDE_CONTEXT = getPromptContext(lesson, "");
         SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
-        daySelect.value = lesson.day_id;
-        populateSlideSelect(lesson.day_id, lesson.id);
+        activeSlideMeta.textContent = `${lesson.day_title} · Slide ${lesson.page}`;
         slideFileName.textContent = lesson.file;
         slideDayBadge.textContent = `${lesson.badge || lesson.day_title} · ${lesson.page_count} trang`;
-        slideCounter.textContent = `Trang ${lesson.page} / ${lesson.page_count}`;
+        pageInput.max = lesson.page_count;
+        pageInput.value = lesson.page;
+        slideCounter.textContent = `/ ${lesson.page_count}`;
         slidePageBadge.textContent = `Trang ${lesson.page} / ${lesson.page_count}`;
         pdfFrame.src = getPdfUrl(lesson);
-        questionInput.placeholder = `Trang ${lesson.page}: chọn nội dung trên PDF/OCR rồi gõ câu hỏi của bạn...`;
+        questionInput.placeholder = `Trang ${lesson.page}: bôi đen nội dung trên slide rồi gõ câu hỏi của bạn...`;
         questionInput.dataset.selection = "";
         loadOcrText(lesson);
       }
 
-      function populateDaySelect() {
-        daySelect.innerHTML = SLIDE_DAYS
-          .map(day => `<option value="${day.id}">${day.title}</option>`)
-          .join("");
-      }
-
-      function populateSlideSelect(dayId, selectedSlideId) {
-        const day = SLIDE_DAYS.find(item => item.id === dayId) || SLIDE_DAYS[0];
-        const slides = day ? day.slides : [];
-        slideSelect.innerHTML = slides
-          .map(slide => `<option value="${slide.id}">${slide.title}</option>`)
-          .join("");
-        if (selectedSlideId) {
-          slideSelect.value = selectedSlideId;
-        }
-      }
-
-      function renderSelectedSlide() {
-        const selectedIndex = SLIDES.findIndex(slide => slide.id === slideSelect.value);
-        renderSlide(selectedIndex === -1 ? 0 : selectedIndex);
-      }
-
       async function loadSlideMetadata() {
-        ocrStatus.textContent = "Đang tải danh sách slide...";
         try {
           const res = await fetch("/api/slides");
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -966,44 +883,105 @@ ${ocr}`;
           SLIDE_DAYS = data.days || [];
           SLIDES = SLIDE_DAYS.flatMap(day => day.slides || []);
           if (!SLIDES.length) throw new Error("Không có slide trong metadata.");
-          populateDaySelect();
-          populateSlideSelect(SLIDE_DAYS[0].id, SLIDES[0].id);
           renderSlide(0);
         } catch (err) {
           console.error("Không tải được /api/slides:", err);
           slideFileName.textContent = "Không tải được slide metadata";
           slideDayBadge.textContent = "Backend";
-          slideCounter.textContent = "Trang 0 / 0";
+          pageInput.value = 0;
+          slideCounter.textContent = "/ 0";
           slidePageBadge.textContent = "No slide";
-          ocrText.textContent = "Không tải được danh sách slide. Hãy chạy backend bằng: py codebase/server.py";
-          ocrStatus.textContent = "Metadata lỗi";
         }
       }
 
-      daySelect.addEventListener("change", () => {
-        populateSlideSelect(daySelect.value);
-        renderSelectedSlide();
-      });
-      slideSelect.addEventListener("change", renderSelectedSlide);
       prevSlide.addEventListener("click", () => renderSlide(currentSlideIndex - 1));
       nextSlide.addEventListener("click", () => renderSlide(currentSlideIndex + 1));
+      pageInput.addEventListener("change", () => {
+        const requestedPage = Number(pageInput.value);
+        renderPageByNumber(requestedPage);
+      });
       highlightSlide.addEventListener("click", () => questionInput.focus());
 
-      function captureSelection() {
-        const selected = window.getSelection().toString().trim();
-        if (selected.length > 10) {
-          const preview = selected.length > 40 ? `${selected.substring(0, 40)}...` : selected;
-          questionInput.placeholder = `Bôi đen: "${preview}" — gõ câu hỏi của bạn`;
-          questionInput.dataset.selection = selected;
-          if (!questionInput.value.trim()) {
-            questionInput.value = `Về đoạn: "${preview}"\n`;
+      function renderPageByNumber(page) {
+        const activeDay = SLIDES[currentSlideIndex]?.day_id;
+        const selectedIndex = SLIDES.findIndex(slide => slide.day_id === activeDay && slide.page === page);
+        if (selectedIndex === -1) {
+          pageInput.value = SLIDES[currentSlideIndex]?.page || 1;
+          return;
+        }
+        renderSlide(selectedIndex);
+      }
+
+      function syncPageFromPdfHash() {
+        try {
+          const hash = pdfFrame.contentWindow?.location?.hash || "";
+          const match = hash.match(/page=(\d+)/);
+          if (!match) return;
+          const page = Number(match[1]);
+          if (page && page !== SLIDES[currentSlideIndex]?.page) {
+            renderPageByNumber(page);
           }
-          questionInput.focus();
+        } catch (err) {
+          // Browser PDF viewers may block access to their internal location.
         }
       }
 
-      slideViewer.addEventListener("mouseup", captureSelection);
-      ocrText.addEventListener("mouseup", captureSelection);
+      function capturePdfSelection(event) {
+        try {
+          const selected = pdfFrame.contentWindow?.getSelection?.().toString().trim() || "";
+          if (selected.length > 10) {
+            captureSelection(event, selected);
+          }
+        } catch (err) {
+          console.warn("Không thể đọc selection trực tiếp từ PDF viewer:", err);
+        }
+      }
+
+      function wirePdfFrameInteractions() {
+        window.clearInterval(pdfHashSyncTimer);
+        try {
+          const doc = pdfFrame.contentDocument || pdfFrame.contentWindow?.document;
+          doc?.addEventListener("mouseup", capturePdfSelection);
+          pdfFrame.contentWindow?.addEventListener("hashchange", syncPageFromPdfHash);
+        } catch (err) {
+          console.warn("PDF viewer không cho gắn selection listener trực tiếp:", err);
+        }
+        pdfHashSyncTimer = window.setInterval(syncPageFromPdfHash, 700);
+      }
+
+      function hideSelectionPopover() {
+        selectionPopover.classList.remove("visible");
+      }
+
+      function showSelectionPopover(event, selected) {
+        selectedSlideText = selected;
+        const iframeRect = pdfFrame.getBoundingClientRect();
+        const fromIframe = event.view === pdfFrame.contentWindow;
+        const baseX = fromIframe ? iframeRect.left + event.clientX : event.clientX;
+        const baseY = fromIframe ? iframeRect.top + event.clientY : event.clientY;
+        const x = Math.min(baseX + 12, window.innerWidth - 320);
+        const y = Math.min(baseY + 12, window.innerHeight - 70);
+        selectionPopover.style.left = `${Math.max(14, x)}px`;
+        selectionPopover.style.top = `${Math.max(14, y)}px`;
+        selectionPopover.classList.add("visible");
+      }
+
+      function captureSelection(event, explicitText) {
+        const selected = (explicitText || window.getSelection().toString()).trim();
+        if (selected.length > 10) {
+          const preview = selected.length > 40 ? `${selected.substring(0, 40)}...` : selected;
+          selectedSlideText = selected;
+          questionInput.placeholder = `Bôi đen: "${preview}" — gõ câu hỏi của bạn`;
+          questionInput.dataset.selection = selected;
+          showSelectionPopover(event, selected);
+        }
+      }
+
+      pdfFrame.addEventListener("load", wirePdfFrameInteractions);
+      dismissSelection.addEventListener("click", hideSelectionPopover);
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") hideSelectionPopover();
+      });
 
       /* ───────── 4. Multi-provider adapters ───────── */
       const PROVIDERS = {
@@ -1152,13 +1130,14 @@ ${ocr}`;
 
         root.querySelectorAll(".skip").forEach((button) => {
           button.addEventListener("click", () => {
-            const bubble = button.closest(".tutor-response");
-            const target = bubble.querySelector(".misconception-wrap");
-            if (target) {
-              target.classList.add("hidden");
-              button.textContent = "Đã bỏ qua";
-              button.disabled = true;
-            }
+            const message = button.closest(".message");
+            const bubble = message.querySelector(".bubble");
+            message.classList.add("skipped");
+            bubble.innerHTML = `
+              <div class="section answer">
+                <h3>Đã bỏ qua</h3>
+                <p>Mình đã bỏ qua câu hỏi kiểm tra này. Bạn có thể hỏi câu tiếp theo bất cứ lúc nào.</p>
+              </div>`;
           });
         });
       }
@@ -1220,11 +1199,19 @@ ${ocr}`;
         chatStream.appendChild(errDiv);
       }
 
-      /* ───────── 7. Submit handler ───────── */
-      composer.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const text = questionInput.value.trim();
-        if (!text) return;
+      function renderLocalFallback(userText) {
+        const selected = questionInput.dataset.selection || selectedSlideText;
+        renderTutorResponse({
+          answer: `Mình đang dùng chế độ dự phòng vì chưa có API key khả dụng. ${selected ? `Đoạn bạn chọn là: "${selected}". ` : ""}Bạn có thể xem đây là phần cần làm rõ trong slide; mình sẽ tập trung vào ý chính, thuật ngữ và ví dụ liên quan đến đoạn đó.`,
+          has_misconception: false,
+          misconception: "",
+          check_question: "Bạn muốn mình làm rõ thuật ngữ, ví dụ, hay ý chính nào trong đoạn này?"
+        });
+      }
+
+      async function submitQuestion(text) {
+        const cleaned = text.trim();
+        if (!cleaned) return;
 
         const providerId = getActiveProvider();
         const provider = PROVIDERS[providerId];
@@ -1233,21 +1220,28 @@ ${ocr}`;
           renderError("Provider không hợp lệ.");
           return;
         }
-        if (!provider.getKey()) {
-          renderError(`Chưa có API key cho ${provider.name}. Hãy thêm key vào file .env rồi reload trang.`);
-          return;
-        }
 
-        addStudentMessage(text);
+        addStudentMessage(cleaned);
         questionInput.value = "";
         questionInput.disabled = true;
         sendButton.disabled = true;
         providerSelect.disabled = true;
+
+        if (!provider.getKey()) {
+          renderLocalFallback(cleaned);
+          questionInput.disabled = false;
+          sendButton.disabled = false;
+          providerSelect.disabled = false;
+          questionInput.focus();
+          scrollToLatest();
+          return;
+        }
+
         const loading = addLoadingMessage(provider.name);
         scrollToLatest();
 
         try {
-          const { url, options } = provider.buildRequest(text);
+          const { url, options } = provider.buildRequest(cleaned);
           const res = await fetch(url, options);
           const data = await res.json();
           const raw = provider.parseResponse(data);
@@ -1264,6 +1258,20 @@ ${ocr}`;
         providerSelect.disabled = false;
         questionInput.focus();
         scrollToLatest();
+      }
+
+      /* ───────── 7. Submit handler ───────── */
+      composer.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        submitQuestion(questionInput.value);
+      });
+
+      askSelection.addEventListener("click", () => {
+        const text = selectedSlideText.trim();
+        hideSelectionPopover();
+        if (text) {
+          submitQuestion(`Giải thích về "${text}" trong slide.`);
+        }
       });
 
       /* ───────── 8. Init ───────── */

@@ -280,7 +280,15 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json({"error": "Unknown slide id"}, 404)
                 return
             text, source = extract_slide_text(slide_id)
-            self.send_json({"slide": slide_id, "text": text, "source": source})
+            slide = SLIDES[slide_id]
+            self.send_json({
+                "slide": slide_id,
+                "page": slide["page"],
+                "page_count": slide["page_count"],
+                "pdf": slide["pdf"],
+                "text": text,
+                "source": source,
+            })
             return
 
         if path.startswith("/slides/"):
