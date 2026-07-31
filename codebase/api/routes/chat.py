@@ -13,16 +13,22 @@ agent = ReActAgent(llm_service=llm_service)
 class ChatRequest(BaseModel):
     provider: str
     userText: str
-    systemPrompt: str
+    selectedText: str = ""
+    fullSlideText: str = ""
 
 @router.post("/chat", response_class=PlainTextResponse)
 def chat_api(request: ChatRequest):
     try:
-        # Gọi Agent thay vì gọi trực tiếp LLM Service. 
-        # Tương lai agent.run() sẽ xử lý tool calling loop.
+        from prompts.system_prompts import PromptManager
+        
+        system_prompt = PromptManager.build_tutor_prompt(
+            selected_text=request.selectedText,
+            full_slide_text=request.fullSlideText
+        )
+        
         raw_answer = agent.run(
             user_input=request.userText,
-            base_system_prompt=request.systemPrompt,
+            base_system_prompt=system_prompt,
             provider=request.provider
         )
         return raw_answer

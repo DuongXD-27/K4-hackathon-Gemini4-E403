@@ -20,56 +20,16 @@
   /* ── 3. System prompt ── */
   let FULL_SLIDE_TEXT = "";
   let SLIDE_CONTEXT = "";
-  let SYSTEM_PROMPT = buildSystemPrompt("");
 
-  function buildSystemPrompt(selectedText) {
-    const fullContext = FULL_SLIDE_TEXT 
-      ? `\n\nNội dung toàn bộ bài giảng (để bạn có bối cảnh chung):\n---\n${FULL_SLIDE_TEXT}\n---\n` 
-      : "";
-    const ctx = selectedText && selectedText.trim()
-      ? `Đoạn slide học viên đang bôi đen:\n---\n${selectedText.trim()}\n---`
-      : "(Học viên chưa bôi đen đoạn nào. Hãy gợi ý họ bôi đen nội dung muốn hỏi.)";
-    return `Bạn là AI Tutor trong nền tảng học AI Thực Chiến. Học viên đang đọc slide HTML và vừa bôi đen một đoạn rồi hỏi bạn.${fullContext}
-${ctx}
-Với MỖI câu hỏi, bạn BẮT BUỘC trả lời theo đúng cấu trúc JSON sau, không thêm gì khác ngoài JSON:
-{
-  "answer": "Câu trả lời giải thích khái niệm, dựa vào đoạn bôi đen nếu có. Nếu không có căn cứ trong đoạn, ghi rõ 'thông tin này ngoài đoạn đang xem'.",
-  "misconception_detected": true hoặc false,
-  "misconception_confidence": "high" hoặc "medium" hoặc "low",
-  "misconception_evidence": "Trích dẫn/giải thích lý do vì sao học viên có vẻ đang nhầm lẫn",
-  "check_question": "Câu hỏi kiểm tra nhanh (chỉ hiển thị nếu detected=true và confidence=high)"
-}
-Quy tắc:
-- misconception_detected = true CHỈ KHI câu hỏi ẩn chứa nhầm lẫn rõ ràng.
-- Bắt buộc phải có misconception_evidence rõ ràng thì mới được đặt misconception_confidence = "high".
-- Đừng lúc nào cũng hỏi ngược lại học viên. Hãy cẩn thận khi flag misconception.
-- Nếu câu hỏi quá mơ hồ và không có đoạn bôi đen làm ngữ cảnh: answer = "Bạn đang thắc mắc về phần nào cụ thể? Hãy mô tả thêm hoặc bôi đen đoạn bạn chưa hiểu nhé.", misconception_detected = false.
-- Nếu câu hỏi ngắn gọn nhưng có thể suy luận từ đoạn bôi đen (ví dụ: "giải thích đoạn này", "là sao?"), hãy cố gắng giải thích đoạn slide đó.
-- Luôn dùng tiếng Việt, giọng thân thiện như mentor.
-
-Ví dụ đánh giá độ tự tin (misconception_confidence):
-Ví dụ 1 (misconception_confidence = "high"):
-- HV: "Fine-tune xong thì model sẽ tự động thêm tài liệu mới vào lúc trả lời đúng không?"
-- Đánh giá: Nhầm lẫn giữa Fine-tuning và RAG (RAG mới là nạp tài liệu lúc hỏi), có bằng chứng rõ trong câu hỏi.
-→ misconception_detected: true, misconception_confidence: "high"
-
-Ví dụ 2 (misconception_confidence = "high"):
-- HV: "Agent chỉ là LLM thôi đúng không?"
-- Đánh giá: Nhầm lẫn rõ ràng — Agent = LLM (Reasoning) + Tools + Memory + Action, không chỉ riêng LLM trần.
-→ misconception_detected: true, misconception_confidence: "high", check_question: "Theo bạn, ngoài bộ não LLM, agent cần thêm những thành phần nào để có thể tự hoàn thành một mục tiêu?"
-
-Ví dụ 3 (misconception_confidence = "low"):
-- HV: "Temperature cao thì output đa dạng hơn đúng không?"
-- Đánh giá: HV đang hiểu đúng, không có nhầm lẫn.
-→ misconception_detected: false, misconception_confidence: "low", check_question: ""`;
+  function updateContext(selectedText) {
+    SLIDE_CONTEXT = selectedText || "";
   }
 
   /* ── 4. Selection capture — nhận postMessage từ iframe slide ── */
   function applySelection(text) {
     const trimmed = (text || "").trim();
     if (trimmed.length > 8) {
-      SLIDE_CONTEXT = trimmed;
-      SYSTEM_PROMPT = buildSystemPrompt(trimmed);
+      updateContext(trimmed);
 
       const preview = trimmed.length > 45 ? trimmed.substring(0, 45) + "…" : trimmed;
       selectionPreview.textContent = preview;
@@ -84,8 +44,7 @@ Ví dụ 3 (misconception_confidence = "low"):
   }
 
   function clearSelection() {
-    SLIDE_CONTEXT = "";
-    SYSTEM_PROMPT = buildSystemPrompt("");
+    updateContext("");
     selectionDisplay.classList.remove("active");
     selectionDisplayText.textContent = "";
     selectionPill.classList.remove("active");
@@ -106,8 +65,7 @@ Ví dụ 3 (misconception_confidence = "low"):
     
     if (event.data.type === "SLIDE_FULL_TEXT") {
       FULL_SLIDE_TEXT = event.data.text;
-      // Build lại prompt để ăn context mới
-      SYSTEM_PROMPT = buildSystemPrompt(SLIDE_CONTEXT);
+      // Không cần build system prompt ở frontend nữa
       console.log("✓ Đã nhận toàn bộ nội dung bài giảng từ slide HTML");
     } else if (event.data.type === "SLIDE_SELECTION") {
       applySelection(event.data.text);
@@ -245,7 +203,8 @@ Ví dụ 3 (misconception_confidence = "low"):
         body: JSON.stringify({
           provider: providerValue,
           userText: text,
-          systemPrompt: SYSTEM_PROMPT
+          selectedText: SLIDE_CONTEXT,
+          fullSlideText: FULL_SLIDE_TEXT
         })
       });
       

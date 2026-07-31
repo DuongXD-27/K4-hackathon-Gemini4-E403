@@ -123,6 +123,47 @@
   --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
+[data-theme="gruvbox-light"] {
+  color-scheme: light;
+  --bg: #fbf1c7;
+  --bg-gradient-1: rgba(157, 0, 6, 0.1);
+  --bg-gradient-2: #ebdbb2;
+  --bg-gradient-3: #d5c4a1;
+  
+  --line: rgba(121, 116, 14, 0.15);
+  --text: #3c3836;
+  --muted: #7c6f64;
+  --indigo: #9d0006; 
+  --indigo-2: #8f3f71;
+  --blue: #076678;
+  --student: #427b58;
+  
+  --panel-bg-1: rgba(253, 244, 193, 0.95);
+  --panel-bg-2: rgba(235, 219, 178, 0.98);
+  --panel-header-bg: rgba(213, 196, 161, 0.6);
+  
+  --bubble-tutor-bg: #f2e5bc;
+  --bubble-tutor-text: #3c3836;
+  --bubble-tutor-border: rgba(121, 116, 14, 0.15);
+  
+  --composer-bg: rgba(213, 196, 161, 0.6);
+  --input-bg: #fbf1c7;
+  --input-border: rgba(121, 116, 14, 0.2);
+  
+  --feedback-bg: rgba(213, 196, 161, 0.6);
+  --feedback-color: #504945;
+  
+  --provider-bg: rgba(157, 0, 6, 0.05);
+  --provider-border: rgba(157, 0, 6, 0.2);
+  --provider-text: #282828;
+  
+  --amber-bg: rgba(181, 118, 20, 0.1);
+  --amber-line: #b57614;
+  --green-bg: rgba(121, 116, 14, 0.1);
+  --green-line: #79740e;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 /* ── True viewport layout — NO page scroll ── */
