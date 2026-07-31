@@ -4,14 +4,18 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import PlainTextResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+import sys
 import uvicorn
-
-from llm_service import LLMService
 
 ROOT = Path(__file__).resolve().parents[1]
 CODEBASE = ROOT / "codebase"
 STATIC_DIR = CODEBASE / "static"
 SLIDES_DIR = ROOT / "data" / "vlearn-pack" / "slides"
+
+if str(CODEBASE) not in sys.path:
+    sys.path.insert(0, str(CODEBASE))
+
+from llm_service import LLMService
 
 def load_dotenv() -> dict[str, str]:
     env_path = ROOT / ".env"
